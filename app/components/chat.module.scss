@@ -281,29 +281,11 @@
   }
 }
 
-.chat-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100vh; 
-  overflow: hidden;
-}
-
-.avatar-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0; 
-  pointer-events: none; 
-}
-
 .chat {
   display: flex;
   flex-direction: column;
   position: relative;
   height: 100%;
-  z-index: 1;
 }
 
 .chat-body {
@@ -314,7 +296,11 @@
   padding-bottom: 40px;
   position: relative;
   overscroll-behavior: none;
-  z-index: 1;
+}
+
+.chat-body-avatar-container {
+  width: 100%;
+  height: 30vh; 
 }
 
 .chat-body-main-title {

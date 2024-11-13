@@ -3,7 +3,7 @@ import { useGLTF, useAnimations } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-export function Avatar(props) {
+export function Avatar3d(props) {
   const group = useRef();
   const { scene } = useThree();
   const { nodes, materials, animations } = useGLTF("/fix.glb");
