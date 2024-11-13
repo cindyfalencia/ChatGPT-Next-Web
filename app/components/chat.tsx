@@ -1699,21 +1699,19 @@ function _Chat() {
                 setAutoScroll(false);
               }}
             >
-              <Canvas
-                shadows
-                camera={{ position: [0, 1.7, 2], fov: 30 }}
-                className={styles["chat-body-avatar"]}
-              >
-                <Environment preset="studio" />
-                <OrbitControls
-                  enablePan={false}
-                  enableZoom={false}
-                  minDistance={1.5}
-                  maxPolarAngle={Math.PI / 2}
-                  target={[0, 1.6, 0]}
-                />
-                <Avatar />
-              </Canvas>
+              <div className={styles["chat-body-avatar-container"]}>
+                <Canvas shadows camera={{ position: [0, 1.7, 2], fov: 30 }}>
+                  <Environment preset="studio" />
+                  <OrbitControls
+                    enablePan={false}
+                    enableZoom={false}
+                    minDistance={1.5}
+                    maxPolarAngle={Math.PI / 2}
+                    target={[0, 1.6, 0]}
+                  />
+                  <Avatar />
+                </Canvas>
+              </div>
               {messages.map((message, i) => {
                 const isUser = message.role === "user";
                 const isContext = i < context.length;

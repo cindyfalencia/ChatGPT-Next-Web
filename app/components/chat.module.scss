@@ -298,8 +298,9 @@
   overscroll-behavior: none;
 }
 
-.chat-body-avatar {
+.chat-body-avatar-container {
   width: 100%;
+  height: 30vh; 
 }
 
 .chat-body-main-title {
