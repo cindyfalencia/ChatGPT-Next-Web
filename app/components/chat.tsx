@@ -8,7 +8,6 @@ import React, {
   Fragment,
   RefObject,
 } from "react";
-
 import SendWhiteIcon from "../icons/send-white.svg";
 import BrainIcon from "../icons/brain.svg";
 import RenameIcon from "../icons/rename.svg";
@@ -1623,6 +1622,7 @@ function _Chat() {
               )}
               onClickCapture={() => setIsEditingMessage(true)}
             >
+              test
               {!session.topic ? DEFAULT_TOPIC : session.topic}
             </div>
             <div className="window-header-sub-title">
