@@ -8,6 +8,8 @@ import React, {
   Fragment,
   RefObject,
 } from "react";
+import { Canvas } from "@react-three/fiber";
+import { Environment, OrbitControls } from "@react-three/drei";
 import SendWhiteIcon from "../icons/send-white.svg";
 import BrainIcon from "../icons/brain.svg";
 import RenameIcon from "../icons/rename.svg";
@@ -1697,6 +1699,21 @@ function _Chat() {
                 setAutoScroll(false);
               }}
             >
+              <Canvas
+                shadows
+                camera={{ position: [0, 1.7, 2], fov: 30 }}
+                className={styles["chat-body-avatar"]}
+              >
+                <Environment preset="studio" />
+                <OrbitControls
+                  enablePan={false}
+                  enableZoom={false}
+                  minDistance={1.5}
+                  maxPolarAngle={Math.PI / 2}
+                  target={[0, 1.6, 0]}
+                />
+                <Avatar />
+              </Canvas>
               {messages.map((message, i) => {
                 const isUser = message.role === "user";
                 const isContext = i < context.length;
