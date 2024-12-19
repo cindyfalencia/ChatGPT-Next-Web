@@ -126,6 +126,8 @@ import { getModelProvider } from "../utils/model";
 import { RealtimeChat } from "@/app/components/realtime-chat";
 import clsx from "clsx";
 
+import { mbtiDictionary } from "../api/mbti-dictionary/mbtiDictionary";
+
 const localStorage = safeLocalStorage();
 
 const ttsPlayer = createTTSPlayer();
@@ -133,6 +135,14 @@ const ttsPlayer = createTTSPlayer();
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
 });
+
+const generatePrompt = (userInput: string, mbtiType: string): string => {
+  const personalityPrompt = mbtiDictionary[mbtiType];
+  if (!personalityPrompt) {
+    throw new Error(`MBTI type "${mbtiType}" not found.`);
+  }
+  return `${personalityPrompt} ${userInput}`;
+};
 
 export function SessionConfigModel(props: { onClose: () => void }) {
   const chatStore = useChatStore();
