@@ -1,6 +1,8 @@
+"use client";
+
 import { Analytics } from "@vercel/analytics/react";
 import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { supabase } from "./lib/supabaseClient";
 import { Home } from "./components/home";
 
