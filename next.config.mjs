@@ -24,6 +24,12 @@ const nextConfig = {
       child_process: false,
     };
 
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      bufferutil: false,
+      "utf-8-validate": false,
+    };
+    
     return config;
   },
   output: mode,

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import styles from "./introduction.module.scss";
 
 const IntroductionPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,7 +21,7 @@ const IntroductionPage = () => {
       });
 
       if (response.ok) {
-        router.push("/avatar");
+        navigate("/avatar");
       } else {
         const errorData = await response.json();
         alert(`Upload failed: ${errorData.error || "Unknown error"}`);

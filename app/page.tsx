@@ -2,12 +2,12 @@
 
 import { Analytics } from "@vercel/analytics/react";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "./lib/supabaseClient";
 import { Home } from "./components/home";
 
 export default function App() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -15,7 +15,7 @@ export default function App() {
 
       if (!session) {
         // User is not logged in, redirect to auth page
-        router.push("/auth");
+        navigate("/auth");
       } else {
         // Check if the user is new or returning
         const { data: profile } = await supabase
@@ -24,15 +24,15 @@ export default function App() {
           .single();
 
         if (profile?.is_new) {
-          router.push("/introduction");
+          navigate("/introduction");
         } else {
-          router.push("/home");
+          navigate("/home");
         }
       }
     };
 
     checkAuthStatus();
-  }, [router]);
+  }, [navigate]);
 
   return (
     <>
