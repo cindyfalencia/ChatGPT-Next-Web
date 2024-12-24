@@ -1,10 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error("supabaseUrl and supabaseKey must be defined");
+console.log("Supabase URL:", supabaseUrl);
+console.log("Supabase Key:", supabaseAnonKey);
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error("Supabase URL and Key must be defined");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

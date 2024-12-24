@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { supabase } from "./lib/supabaseClient";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setLogin] = useState(true);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ const AuthPage = () => {
       if (error) {
         alert("login failed: " + error.message);
       } else {
-        navigate("/");
+        router.push("/");
       }
     } else {
       // handle Sign up

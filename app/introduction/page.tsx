@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import styles from "./introduction.module.scss";
 
 const IntroductionPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,7 +21,7 @@ const IntroductionPage = () => {
       });
 
       if (response.ok) {
-        navigate("/avatar");
+        router.push("/avatar");
       } else {
         const errorData = await response.json();
         alert(`Upload failed: ${errorData.error || "Unknown error"}`);
@@ -70,7 +70,13 @@ const IntroductionPage = () => {
           className={styles.submitButton}
           disabled={isLoading}
         >
-          {isLoading ? "Uploading..." : "Submit and Generate Avatar"}
+          {isLoading ? (
+            <span>
+              <span className={styles.spinner}></span> Uploading...
+            </span>
+          ) : (
+            "Submit and Generate Avatar"
+          )}
         </button>
       </form>
     </div>
