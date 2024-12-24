@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "./avatar.module.scss";
 
 const AvatarPage = () => {
@@ -14,7 +16,10 @@ const AvatarPage = () => {
         ></iframe>
       </div>
       <div className={styles.buttonContainer}>
-        <button onClick={() => (window.location.href = "/new-chat")}>
+        <button
+          className={styles.nextButton}
+          onClick={() => (window.location.href = "/new-chat")}
+        >
           Next
         </button>
       </div>

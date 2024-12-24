@@ -1,54 +1,63 @@
 .container {
-    max-width: 600px;
-    margin: 0 auto;
-    text-align: center;
-    padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+}
+
+.title {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+.description {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: var(--gray);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--black);
+}
+
+.textarea {
+  margin-top: 5px;
+  padding: 10px;
+  font-size: 0.9rem;
+}
+
+.fileInput {
+  margin-top: 5px;
+  padding: 10px;
+  font-size: 0.9rem;
+}
+
+.submitButton {
+  padding: 10px 15px;
+  font-size: 1rem;
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #005bb5; /* Replace with a darker shade */
   }
-  
-  .title {
-    margin-bottom: 10px;
-    font-size: 1.5rem;
-  }
-  
-  .description {
-    margin-bottom: 20px;
-    font-size: 1rem;
-    color: #555;
-  }
-  
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  label {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    font-size: 0.9rem;
-    color: #333;
-  }
-  
-  textarea,
-  input[type="file"] {
-    margin-top: 5px;
-    padding: 10px;
-    font-size: 0.9rem;
-  }
-  
-  button {
-    padding: 10px 15px;
-    font-size: 1rem;
-    color: white;
-    background-color: #0070f3;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  button:disabled {
+
+  &:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
   }
-  
+}

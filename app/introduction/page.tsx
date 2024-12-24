@@ -21,7 +21,7 @@ const IntroductionPage = () => {
       });
 
       if (response.ok) {
-        router.push("/avatar"); // Redirect to Avatar Page after successful upload
+        router.push("/avatar");
       } else {
         const errorData = await response.json();
         alert(`Upload failed: ${errorData.error || "Unknown error"}`);
@@ -45,20 +45,31 @@ const IntroductionPage = () => {
         onSubmit={handleUpload}
         encType="multipart/form-data"
       >
-        <label>
+        <label className={styles.label}>
           Chat History:
           <textarea
             name="chatHistory"
             rows={4}
             cols={50}
             placeholder="Paste your chat history here"
+            className={styles.textarea}
           ></textarea>
         </label>
-        <label>
+        <label className={styles.label}>
           Upload photos or videos:
-          <input type="file" name="media" accept="image/*,video/*" multiple />
+          <input
+            type="file"
+            name="media"
+            accept="image/*,video/*"
+            multiple
+            className={styles.fileInput}
+          />
         </label>
-        <button type="submit" disabled={isLoading}>
+        <button
+          type="submit"
+          className={styles.submitButton}
+          disabled={isLoading}
+        >
           {isLoading ? "Uploading..." : "Submit and Generate Avatar"}
         </button>
       </form>
