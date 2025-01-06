@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import { Analytics } from "@vercel/analytics/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "./lib/supabaseClient";
 import { Home } from "./components/home";
@@ -13,6 +13,7 @@ const serverConfig = getServerSideConfig();
 
 export default async function App() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -30,14 +31,17 @@ export default async function App() {
 
         if (profile?.is_new) {
           router.push("/introduction");
-        } else {
-          router.push("/home");
         }
       }
+      setLoading(false);
     };
 
     checkAuthStatus();
   }, [router]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Display a loading message or spinner
+  }
 
   return (
     <>
