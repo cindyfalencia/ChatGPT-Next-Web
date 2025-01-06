@@ -7,8 +7,11 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "./lib/supabaseClient";
 import { Home } from "./components/home";
+import { getServerSideConfig } from "./config/server";
 
-export default function App() {
+const serverConfig = getServerSideConfig();
+
+export default async function App() {
   const router = useRouter();
 
   useEffect(() => {
@@ -39,7 +42,11 @@ export default function App() {
   return (
     <>
       <Home />
-      <Analytics />
+      {serverConfig?.isVercel && (
+        <>
+          <Analytics />
+        </>
+      )}
     </>
   );
 }
