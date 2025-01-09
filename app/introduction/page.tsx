@@ -12,10 +12,13 @@ const IntroductionPage = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const chatHistory = e.currentTarget.chatHistory.value.trim();
-    const questionnaire = e.currentTarget.questionnaire.value.trim();
+    const chatHistory = e.currentTarget.chatHistory.value;
+    const questionnaire = e.currentTarget.questionnaire.value;
 
     try {
+      const payload = { chatHistory, questionnaire };
+      console.log("Sending payload:", payload);
+
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: {
@@ -24,13 +27,13 @@ const IntroductionPage = () => {
         body: JSON.stringify({ chatHistory, questionnaire }),
       });
 
+      console.log("API response:", response);
+
       if (response.ok) {
-        // Redirect to Avatar Page after successful upload
         router.push("/avatar");
       } else {
-        const errorText = await response.text();
-        console.error("Server error:", errorText);
-        alert(`Upload failed: ${errorText}`);
+        const errorData = await response.json();
+        alert(`Upload failed: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error during upload:", error);
