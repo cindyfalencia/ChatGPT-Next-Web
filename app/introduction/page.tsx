@@ -12,8 +12,8 @@ const IntroductionPage = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const chatHistory = e.currentTarget.chatHistory.value;
-    const questionnaire = e.currentTarget.questionnaire.value;
+    const chatHistory = e.currentTarget.chatHistory.value.trim();
+    const questionnaire = e.currentTarget.questionnaire.value.trim();
 
     try {
       const response = await fetch("/api/upload", {
@@ -25,7 +25,8 @@ const IntroductionPage = () => {
       });
 
       if (response.ok) {
-        router.push("/avatar"); // Redirect to Avatar Page after successful upload
+        // Redirect to Avatar Page after successful upload
+        router.push("/avatar");
       } else {
         const errorData = await response.json();
         alert(`Upload failed: ${errorData.error || "Unknown error"}`);
@@ -44,11 +45,7 @@ const IntroductionPage = () => {
       <p className={styles.description}>
         Help us understand your personality by providing data below:
       </p>
-      <form
-        className={styles.form}
-        onSubmit={handleUpload}
-        encType="multipart/form-data"
-      >
+      <form className={styles.form} onSubmit={handleUpload}>
         <label className={styles.label}>
           Chat History (optional):
           <textarea
