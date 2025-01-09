@@ -42,7 +42,11 @@ export default function App() {
           }
         }
       } catch (err) {
-        console.error("Error during auth check:", err.message);
+        if (err instanceof Error) {
+          console.error("Error during auth check:", err.message);
+        } else {
+          console.error("Error during auth check:", err);
+        }
       } finally {
         setLoading(false);
       }
