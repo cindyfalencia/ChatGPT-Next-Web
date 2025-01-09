@@ -28,8 +28,9 @@ const IntroductionPage = () => {
         // Redirect to Avatar Page after successful upload
         router.push("/avatar");
       } else {
-        const errorData = await response.json();
-        alert(`Upload failed: ${errorData.error || "Unknown error"}`);
+        const errorText = await response.text();
+        console.error("Server error:", errorText);
+        alert(`Upload failed: ${errorText}`);
       }
     } catch (error) {
       console.error("Error during upload:", error);
