@@ -12,12 +12,16 @@ const IntroductionPage = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const formData = new FormData(e.currentTarget);
+    const chatHistory = e.currentTarget.chatHistory.value;
+    const questionnaire = e.currentTarget.questionnaire.value;
 
     try {
       const response = await fetch("/api/upload", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ chatHistory, questionnaire }),
       });
 
       if (response.ok) {
