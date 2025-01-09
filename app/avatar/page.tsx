@@ -1,27 +1,32 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import styles from "./avatar.module.scss";
 
 const AvatarPage = () => {
+  const handleNext = () => {
+    // Redirect to the home page after customization
+    window.location.href = "/home";
+  };
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Customize your avatar</h1>
+      <h1 className={styles.title}>Customize your Avatar</h1>
       <p className={styles.description}>
-        Create a personalized avatar to enhance your chatbot experience.
+        Create your personalized avatar to enhance the chatbot experience.
       </p>
       <div className={styles.iframeContainer}>
         <iframe
-          src="https://avaturn.com/embed"
-          title="Avatar customization"
+          src="https://hub.avaturn.me/create/upload"
+          title="Avatar Customization"
+          style={{
+            width: "100%",
+            height: "600px",
+            border: "none",
+          }}
         ></iframe>
       </div>
       <div className={styles.buttonContainer}>
-        <button
-          className={styles.nextButton}
-          onClick={() => (window.location.href = "/new-chat")}
-        >
+        <button className={styles.nextButton} onClick={handleNext}>
           Next
         </button>
       </div>

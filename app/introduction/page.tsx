@@ -21,7 +21,7 @@ const IntroductionPage = () => {
       });
 
       if (response.ok) {
-        router.push("/home"); // Redirect to Home Page after successful upload
+        router.push("/avatar"); // Redirect to Avatar Page after successful upload
       } else {
         const errorData = await response.json();
         alert(`Upload failed: ${errorData.error || "Unknown error"}`);
@@ -38,7 +38,7 @@ const IntroductionPage = () => {
     <div className={styles.container}>
       <h1 className={styles.title}>Welcome to Personalized Chatbot</h1>
       <p className={styles.description}>
-        Upload your data to create a custom avatar and personality
+        Help us understand your personality by providing data below:
       </p>
       <form
         className={styles.form}
@@ -46,7 +46,7 @@ const IntroductionPage = () => {
         encType="multipart/form-data"
       >
         <label className={styles.label}>
-          Chat History:
+          Chat History (optional):
           <textarea
             name="chatHistory"
             rows={4}
@@ -56,21 +56,21 @@ const IntroductionPage = () => {
           ></textarea>
         </label>
         <label className={styles.label}>
-          Upload photos or videos:
-          <input
-            type="file"
-            name="media"
-            accept="image/*,video/*"
-            multiple
-            className={styles.fileInput}
-          />
+          Personality Questionnaire:
+          <textarea
+            name="questionnaire"
+            rows={6}
+            cols={50}
+            placeholder="E.g., Describe your ideal weekend, your favorite activities, etc."
+            className={styles.textarea}
+          ></textarea>
         </label>
         <button
           type="submit"
           className={styles.submitButton}
           disabled={isLoading}
         >
-          {isLoading ? "Uploading..." : "Submit and Generate Avatar"}
+          {isLoading ? "Uploading..." : "Submit and Proceed"}
         </button>
       </form>
     </div>
