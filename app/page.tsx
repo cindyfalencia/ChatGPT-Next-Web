@@ -1,72 +1,23 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { Analytics } from "@vercel/analytics/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "./lib/supabaseClient";
-import { Home } from "./components/home";
 import { getServerSideConfig } from "./config/server";
 
 const serverConfig = getServerSideConfig();
 
 export default function App() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const { data: session } = await supabase.auth.getSession();
-
-        if (!session) {
-          // User is not logged in, redirect to auth page
-          router.push("/auth");
-        } else {
-          // Check if the user is new or returning
-          const { data: profile, error } = await supabase
-            .from("profiles")
-            .select("is_new")
-            .single();
-
-          if (error) {
-            console.error("Error fetching profile:", error.message);
-            throw new Error("Profile fetch failed");
-          }
-
-          if (profile?.is_new) {
-            router.push("/introduction");
-          } else {
-            router.push("/home");
-          }
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          console.error("Error during auth check:", err.message);
-        } else {
-          console.error("Error during auth check:", err);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuthStatus();
+    router.push("/introduction");
   }, [router]);
-
-  if (loading) {
-    return <div>Loading...</div>; // Display a loading message or spinner
-  }
 
   return (
     <>
-      <Home />
-      {serverConfig?.isVercel && (
-        <>
-          <Analytics />
-        </>
-      )}
+      {/* Render analytics only when running on Vercel */}
+      {serverConfig?.isVercel && <Analytics />}
     </>
   );
 }

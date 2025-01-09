@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./introduction.module.scss";
@@ -23,7 +21,7 @@ const IntroductionPage = () => {
       });
 
       if (response.ok) {
-        router.push("/avatar");
+        router.push("/home"); // Redirect to Home Page after successful upload
       } else {
         const errorData = await response.json();
         alert(`Upload failed: ${errorData.error || "Unknown error"}`);
@@ -72,13 +70,7 @@ const IntroductionPage = () => {
           className={styles.submitButton}
           disabled={isLoading}
         >
-          {isLoading ? (
-            <span>
-              <span className={styles.spinner}></span> Uploading...
-            </span>
-          ) : (
-            "Submit and Generate Avatar"
-          )}
+          {isLoading ? "Uploading..." : "Submit and Generate Avatar"}
         </button>
       </form>
     </div>
