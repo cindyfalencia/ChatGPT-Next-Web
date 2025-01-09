@@ -11,29 +11,41 @@ import { getServerSideConfig } from "./config/server";
 
 const serverConfig = getServerSideConfig();
 
-export default async function App() {
+export default function App() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
-      const { data: session } = await supabase.auth.getSession();
+      try {
+        const { data: session } = await supabase.auth.getSession();
 
-      if (!session) {
-        // User is not logged in, redirect to auth page
-        router.push("/auth");
-      } else {
-        // Check if the user is new or returning
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("is_new")
-          .single();
+        if (!session) {
+          // User is not logged in, redirect to auth page
+          router.push("/auth");
+        } else {
+          // Check if the user is new or returning
+          const { data: profile, error } = await supabase
+            .from("profiles")
+            .select("is_new")
+            .single();
 
-        if (profile?.is_new) {
-          router.push("/introduction");
+          if (error) {
+            console.error("Error fetching profile:", error.message);
+            throw new Error("Profile fetch failed");
+          }
+
+          if (profile?.is_new) {
+            router.push("/introduction");
+          } else {
+            router.push("/home");
+          }
         }
+      } catch (err) {
+        console.error("Error during auth check:", err.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     checkAuthStatus();
