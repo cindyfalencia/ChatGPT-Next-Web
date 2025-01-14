@@ -16,8 +16,7 @@ const IntroductionPage = () => {
     const questionnaire = e.currentTarget.questionnaire.value;
 
     try {
-      const payload = { chatHistory, questionnaire };
-      console.log("Sending payload:", payload);
+      console.log("Submitting data:", { chatHistory, questionnaire });
 
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -27,12 +26,13 @@ const IntroductionPage = () => {
         body: JSON.stringify({ chatHistory, questionnaire }),
       });
 
-      console.log("API response:", response);
-
       if (response.ok) {
+        const result = await response.json();
+        console.log("API success response:", result);
         router.push("/avatar");
       } else {
         const errorData = await response.json();
+        console.error("API error response:", errorData);
         alert(`Upload failed: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
