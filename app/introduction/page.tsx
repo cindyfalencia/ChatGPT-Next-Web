@@ -31,8 +31,8 @@ const IntroductionPage = () => {
       console.log("API response:", result);
 
       if (response.ok) {
-        alert(`Your MBTI type is: ${result.mbti}`);
-        router.push("/avatar"); // Navigate to the avatar page
+        const { mbti } = await response.json();
+        router.push(`/result?mbti=${mbti}`);
       } else {
         alert(`Upload failed: ${result.error || "Unknown error"}`);
       }
