@@ -16,24 +16,25 @@ const IntroductionPage = () => {
     const questionnaire = e.currentTarget.questionnaire.value;
 
     try {
-      console.log("Submitting data:", { chatHistory, questionnaire });
+      const payload = { chatHistory, questionnaire };
+      console.log("Sending payload:", payload);
 
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ chatHistory, questionnaire }),
+        body: JSON.stringify(payload),
       });
 
+      const result = await response.json();
+      console.log("API response:", result);
+
       if (response.ok) {
-        const result = await response.json();
-        console.log("API success response:", result);
-        router.push("/avatar");
+        alert(`Your MBTI type is: ${result.mbti}`);
+        router.push("/avatar"); // Navigate to the avatar page
       } else {
-        const errorData = await response.json();
-        console.error("API error response:", errorData);
-        alert(`Upload failed: ${errorData.error || "Unknown error"}`);
+        alert(`Upload failed: ${result.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error during upload:", error);
