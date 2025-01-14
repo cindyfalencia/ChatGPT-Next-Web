@@ -12,19 +12,23 @@ const ResultPage = () => {
 
   useEffect(() => {
     if (!mbti) {
-      router.push("/introduction"); // Redirect if no MBTI result is found
+      router.push("/introduction");
     }
   }, [mbti, router]);
 
   const handleProceed = () => {
-    router.push("/avatar"); // Navigate to avatar page
+    router.push("/avatar");
   };
+
+  if (!mbti) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Your MBTI Result: {mbti}</h1>
       <p className={styles.description}>
-        {mbti ? mbtiDictionary[mbti] : "Unable to determine MBTI."}
+        {mbtiDictionary[mbti] || "We couldn't determine your MBTI type."}
       </p>
       <button className={styles.proceedButton} onClick={handleProceed}>
         Proceed to Avatar Customization
