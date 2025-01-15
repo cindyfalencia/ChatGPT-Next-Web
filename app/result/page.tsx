@@ -8,7 +8,7 @@ import { mbtiDictionary } from "@/app/api/mbti-dictionary/mbtiDictionary";
 const ResultPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const mbti = searchParams.get("mbti");
+  const mbti = searchParams?.get("mbti");
 
   useEffect(() => {
     if (!mbti) {
