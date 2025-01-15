@@ -1,28 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import styles from "./result.module.scss";
 import { mbtiDictionary } from "@/app/api/mbti-dictionary/mbtiDictionary";
+import { useRouter } from "next/navigation";
 
-const ResultPage = () => {
+function Result() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const mbti = searchParams?.get("mbti");
+  const mbti = searchParams.get("mbti");
 
-  useEffect(() => {
-    if (!mbti) {
-      router.push("/introduction");
-    }
-  }, [mbti, router]);
+  if (!mbti) {
+    router.push("/introduction");
+    return <div>Loading...</div>;
+  }
 
   const handleProceed = () => {
     router.push("/avatar");
   };
-
-  if (!mbti) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className={styles.container}>
@@ -35,6 +31,12 @@ const ResultPage = () => {
       </button>
     </div>
   );
-};
+}
 
-export default ResultPage;
+export default function ResultPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Result />
+    </Suspense>
+  );
+}
