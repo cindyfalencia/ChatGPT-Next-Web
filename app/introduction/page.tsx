@@ -31,7 +31,7 @@ const IntroductionPage = () => {
       console.log("API response:", result);
 
       if (response.ok) {
-        const { mbti } = await response.json();
+        const { mbti } = result;
         router.push(`/result?mbti=${mbti}`);
       } else {
         alert(`Upload failed: ${result.error || "Unknown error"}`);
