@@ -1,18 +1,493 @@
-export const mbtiDictionary: Record<string, string> = {
-  ISTJ: "You are a highly practical and logical individual who values structure and reliability. Provide clear and concise answers.",
-  ISFJ: "You are a caring and dependable individual who values tradition and helping others. Respond in a warm and supportive manner.",
-  INFJ: "You are a creative and insightful individual who strives to make the world a better place. Respond with thoughtfulness and empathy.",
-  INTJ: "You are a strategic and independent thinker who values efficiency and future planning. Provide logical and forward-thinking responses.",
-  ISTP: "You are a practical and hands-on individual who loves solving problems. Respond in a concise and action-oriented way.",
-  ISFP: "You are a creative and sensitive individual who values personal expression. Respond with warmth and a focus on emotions.",
-  INFP: "You are an idealistic and empathetic individual who values meaningful connections. Respond with kindness and imagination.",
-  INTP: "You are an analytical and curious individual who enjoys exploring ideas. Provide thoughtful and logical responses.",
-  ESTP: "You are an energetic and practical individual who thrives in dynamic environments. Respond in a direct and confident manner.",
-  ESFP: "You are a fun-loving and spontaneous individual who enjoys living in the moment. Respond in a lively and engaging way.",
-  ENFP: "You are an enthusiastic and imaginative individual who values creativity and connections. Respond with energy and openness.",
-  ENTP: "You are a curious and innovative individual who loves debating ideas. Respond with creativity and enthusiasm.",
-  ESTJ: "You are a strong-willed and organized individual who values order and responsibility. Provide clear and authoritative responses.",
-  ESFJ: "You are a caring and loyal individual who values harmony and community. Respond in a supportive and considerate manner.",
-  ENFJ: "You are an inspiring and charismatic individual who leads with passion. Respond with empathy and encouragement.",
-  ENTJ: "You are a bold and strategic thinker who values efficiency and leadership. Respond in a decisive and goal-oriented manner.",
+type MBTITrait = {
+  description: string;
+  communicationStyle: string;
+  analysisCriteria: {
+    [key: string]: {
+      expectedScore: number;
+      indicators: string[];
+      weight: number;
+    };
+  };
 };
+
+export const mbtiDictionary: Record<string, MBTITrait> = {
+  ISTJ: {
+    description: "Practical and organized realist",
+    communicationStyle: "Clear and concise answers focusing on facts",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: -0.8,
+        indicators: [
+          "solitary activities",
+          "independent work",
+          "quiet reflection",
+        ],
+        weight: 0.9,
+      },
+      "S/N": {
+        expectedScore: 0.9,
+        indicators: [
+          "concrete details",
+          "practical solutions",
+          "present focus",
+        ],
+        weight: 0.95,
+      },
+      "T/F": {
+        expectedScore: 0.85,
+        indicators: [
+          "logical analysis",
+          "objective reasoning",
+          "systematic approach",
+        ],
+        weight: 0.9,
+      },
+      "J/P": {
+        expectedScore: 0.9,
+        indicators: ["structure", "planning", "organization"],
+        weight: 0.85,
+      },
+    },
+  },
+  ISFJ: {
+    description: "Caring and dependable protector",
+    communicationStyle: "Warm and supportive responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: -0.7,
+        indicators: ["quiet support", "behind-the-scenes", "modest"],
+        weight: 0.85,
+      },
+      "S/N": {
+        expectedScore: 0.8,
+        indicators: ["practical help", "present focus", "concrete details"],
+        weight: 0.9,
+      },
+      "T/F": {
+        expectedScore: -0.9,
+        indicators: ["emotional support", "harmony", "empathy"],
+        weight: 0.95,
+      },
+      "J/P": {
+        expectedScore: 0.8,
+        indicators: ["responsibility", "duty", "organization"],
+        weight: 0.85,
+      },
+    },
+  },
+  INFJ: {
+    description: "Creative and insightful visionary",
+    communicationStyle: "Thoughtful and empathetic responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: -0.6,
+        indicators: ["deep reflection", "introspection", "quiet leadership"],
+        weight: 0.8,
+      },
+      "S/N": {
+        expectedScore: -0.9,
+        indicators: ["future vision", "abstract thinking", "possibilities"],
+        weight: 0.95,
+      },
+      "T/F": {
+        expectedScore: -0.85,
+        indicators: ["empathy", "values", "human connection"],
+        weight: 0.9,
+      },
+      "J/P": {
+        expectedScore: 0.7,
+        indicators: [
+          "structured vision",
+          "organized planning",
+          "goal-oriented",
+        ],
+        weight: 0.8,
+      },
+    },
+  },
+  INTJ: {
+    description: "Strategic and analytical thinker",
+    communicationStyle: "Logical and objective responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: -0.9,
+        indicators: ["independent thinking", "solitary focus", "introspection"],
+        weight: 0.95,
+      },
+      "S/N": {
+        expectedScore: -0.8,
+        indicators: ["strategic planning", "future focus", "abstract concepts"],
+        weight: 0.9,
+      },
+      "T/F": {
+        expectedScore: 0.9,
+        indicators: [
+          "logical reasoning",
+          "objective analysis",
+          "systematic approach",
+        ],
+        weight: 0.95,
+      },
+      "J/P": {
+        expectedScore: 0.85,
+        indicators: ["structured planning", "goal-oriented", "organized"],
+        weight: 0.9,
+      },
+    },
+  },
+  ISTP: {
+    description: "Practical and flexible problem-solver",
+    communicationStyle: "Direct and action-oriented responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: -0.7,
+        indicators: [
+          "independent action",
+          "solitary focus",
+          "practical solutions",
+        ],
+        weight: 0.85,
+      },
+      "S/N": {
+        expectedScore: 0.85,
+        indicators: ["present focus", "concrete details", "hands-on approach"],
+        weight: 0.9,
+      },
+      "T/F": {
+        expectedScore: 0.8,
+        indicators: [
+          "logical analysis",
+          "objective reasoning",
+          "practical solutions",
+        ],
+        weight: 0.85,
+      },
+      "J/P": {
+        expectedScore: -0.7,
+        indicators: ["flexibility", "spontaneity", "adaptability"],
+        weight: 0.8,
+      },
+    },
+  },
+  ISFP: {
+    description: "Gentle and creative free spirit",
+    communicationStyle: "Warm and artistic responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: -0.6,
+        indicators: ["quiet creativity", "solitary focus", "introspection"],
+        weight: 0.8,
+      },
+      "S/N": {
+        expectedScore: 0.7,
+        indicators: [
+          "present focus",
+          "concrete details",
+          "aesthetic appreciation",
+        ],
+        weight: 0.85,
+      },
+      "T/F": {
+        expectedScore: -0.85,
+        indicators: ["emotional expression", "harmony", "empathy"],
+        weight: 0.9,
+      },
+      "J/P": {
+        expectedScore: -0.8,
+        indicators: ["flexibility", "spontaneity", "open-endedness"],
+        weight: 0.85,
+      },
+    },
+  },
+  INFP: {
+    description: "Idealistic and empathetic dreamer",
+    communicationStyle: "Thoughtful and values-driven responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: -0.7,
+        indicators: ["introspection", "quiet reflection", "solitary focus"],
+        weight: 0.85,
+      },
+      "S/N": {
+        expectedScore: -0.9,
+        indicators: ["future vision", "abstract thinking", "possibilities"],
+        weight: 0.95,
+      },
+      "T/F": {
+        expectedScore: -0.85,
+        indicators: ["empathy", "values", "human connection"],
+        weight: 0.9,
+      },
+      "J/P": {
+        expectedScore: -0.7,
+        indicators: ["flexibility", "open-endedness", "spontaneity"],
+        weight: 0.8,
+      },
+    },
+  },
+  INTP: {
+    description: "Logical and innovative thinker",
+    communicationStyle: "Analytical and abstract responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: -0.9,
+        indicators: ["independent thinking", "solitary focus", "introspection"],
+        weight: 0.95,
+      },
+      "S/N": {
+        expectedScore: -0.85,
+        indicators: [
+          "abstract concepts",
+          "theoretical exploration",
+          "future focus",
+        ],
+        weight: 0.9,
+      },
+      "T/F": {
+        expectedScore: 0.9,
+        indicators: [
+          "logical reasoning",
+          "objective analysis",
+          "systematic approach",
+        ],
+        weight: 0.95,
+      },
+      "J/P": {
+        expectedScore: -0.8,
+        indicators: ["flexibility", "open-endedness", "spontaneity"],
+        weight: 0.85,
+      },
+    },
+  },
+  ESTP: {
+    description: "Energetic and action-oriented adventurer",
+    communicationStyle: "Direct and energetic responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: 0.9,
+        indicators: ["social interaction", "action-oriented", "outgoing"],
+        weight: 0.95,
+      },
+      "S/N": {
+        expectedScore: 0.85,
+        indicators: ["present focus", "concrete details", "hands-on approach"],
+        weight: 0.9,
+      },
+      "T/F": {
+        expectedScore: 0.8,
+        indicators: [
+          "logical analysis",
+          "objective reasoning",
+          "practical solutions",
+        ],
+        weight: 0.85,
+      },
+      "J/P": {
+        expectedScore: -0.7,
+        indicators: ["flexibility", "spontaneity", "adaptability"],
+        weight: 0.8,
+      },
+    },
+  },
+  ESFP: {
+    description: "Spontaneous and enthusiastic entertainer",
+    communicationStyle: "Playful and energetic responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: 0.9,
+        indicators: ["social interaction", "outgoing", "energetic"],
+        weight: 0.95,
+      },
+      "S/N": {
+        expectedScore: 0.85,
+        indicators: ["present focus", "concrete details", "hands-on approach"],
+        weight: 0.9,
+      },
+      "T/F": {
+        expectedScore: -0.8,
+        indicators: ["emotional expression", "harmony", "empathy"],
+        weight: 0.85,
+      },
+      "J/P": {
+        expectedScore: -0.7,
+        indicators: ["flexibility", "spontaneity", "open-endedness"],
+        weight: 0.8,
+      },
+    },
+  },
+  ENFP: {
+    description: "Enthusiastic and creative motivator",
+    communicationStyle: "Inspiring and empathetic responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: 0.8,
+        indicators: ["social interaction", "outgoing", "energetic"],
+        weight: 0.9,
+      },
+      "S/N": {
+        expectedScore: -0.9,
+        indicators: ["future vision", "abstract thinking", "possibilities"],
+        weight: 0.95,
+      },
+      "T/F": {
+        expectedScore: -0.85,
+        indicators: ["empathy", "values", "human connection"],
+        weight: 0.9,
+      },
+      "J/P": {
+        expectedScore: -0.7,
+        indicators: ["flexibility", "open-endedness", "spontaneity"],
+        weight: 0.8,
+      },
+    },
+  },
+  ENTP: {
+    description: "Innovative and curious debater",
+    communicationStyle: "Logical and abstract responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: 0.85,
+        indicators: ["social interaction", "outgoing", "energetic"],
+        weight: 0.9,
+      },
+      "S/N": {
+        expectedScore: -0.85,
+        indicators: [
+          "abstract concepts",
+          "theoretical exploration",
+          "future focus",
+        ],
+        weight: 0.9,
+      },
+      "T/F": {
+        expectedScore: 0.8,
+        indicators: [
+          "logical reasoning",
+          "objective analysis",
+          "systematic approach",
+        ],
+        weight: 0.85,
+      },
+      "J/P": {
+        expectedScore: -0.8,
+        indicators: ["flexibility", "open-endedness", "spontaneity"],
+        weight: 0.85,
+      },
+    },
+  },
+  ESTJ: {
+    description: "Efficient and organized leader",
+    communicationStyle: "Direct and structured responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: 0.9,
+        indicators: ["social interaction", "outgoing", "energetic"],
+        weight: 0.95,
+      },
+      "S/N": {
+        expectedScore: 0.85,
+        indicators: ["present focus", "concrete details", "hands-on approach"],
+        weight: 0.9,
+      },
+      "T/F": {
+        expectedScore: 0.8,
+        indicators: [
+          "logical reasoning",
+          "objective analysis",
+          "systematic approach",
+        ],
+        weight: 0.85,
+      },
+      "J/P": {
+        expectedScore: 0.9,
+        indicators: ["structured planning", "goal-oriented", "organized"],
+        weight: 0.95,
+      },
+    },
+  },
+  ESFJ: {
+    description: "Warm and responsible helper",
+    communicationStyle: "Supportive and structured responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: 0.85,
+        indicators: ["social interaction", "outgoing", "energetic"],
+        weight: 0.9,
+      },
+      "S/N": {
+        expectedScore: 0.8,
+        indicators: ["present focus", "concrete details", "hands-on approach"],
+        weight: 0.85,
+      },
+      "T/F": {
+        expectedScore: -0.9,
+        indicators: ["emotional support", "harmony", "empathy"],
+        weight: 0.95,
+      },
+      "J/P": {
+        expectedScore: 0.85,
+        indicators: ["structured planning", "goal-oriented", "organized"],
+        weight: 0.9,
+      },
+    },
+  },
+  ENFJ: {
+    description: "Charismatic and inspiring leader",
+    communicationStyle: "Supportive and motivating responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: 0.9,
+        indicators: ["social interaction", "outgoing", "energetic"],
+        weight: 0.95,
+      },
+      "S/N": {
+        expectedScore: -0.8,
+        indicators: ["future vision", "abstract thinking", "possibilities"],
+        weight: 0.9,
+      },
+      "T/F": {
+        expectedScore: -0.85,
+        indicators: ["empathy", "values", "human connection"],
+        weight: 0.9,
+      },
+      "J/P": {
+        expectedScore: 0.8,
+        indicators: ["structured planning", "goal-oriented", "organized"],
+        weight: 0.85,
+      },
+    },
+  },
+  ENTJ: {
+    description: "Strategic and decisive commander",
+    communicationStyle: "Direct and logical responses",
+    analysisCriteria: {
+      "E/I": {
+        expectedScore: 0.9,
+        indicators: ["social interaction", "outgoing", "energetic"],
+        weight: 0.95,
+      },
+      "S/N": {
+        expectedScore: -0.85,
+        indicators: ["future vision", "abstract thinking", "possibilities"],
+        weight: 0.9,
+      },
+      "T/F": {
+        expectedScore: 0.9,
+        indicators: [
+          "logical reasoning",
+          "objective analysis",
+          "systematic approach",
+        ],
+        weight: 0.95,
+      },
+      "J/P": {
+        expectedScore: 0.85,
+        indicators: ["structured planning", "goal-oriented", "organized"],
+        weight: 0.9,
+      },
+    },
+  },
+};
+
+// Helper type for dictionary access
+export type MBTIType = keyof typeof mbtiDictionary;

@@ -24,7 +24,8 @@ function Result() {
     <div className={styles.container}>
       <h1 className={styles.title}>Your MBTI Result: {mbti}</h1>
       <p className={styles.description}>
-        {mbtiDictionary[mbti] || "We couldn't determine your MBTI type."}
+        {mbtiDictionary[mbti].description ||
+          "We couldn't determine your MBTI type."}
       </p>
       <button className={styles.proceedButton} onClick={handleProceed}>
         Proceed to Avatar Customization

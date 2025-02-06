@@ -23,8 +23,6 @@ import LoadingIcon from "../icons/three-dots.svg";
 import LoadingButtonIcon from "../icons/loading.svg";
 import PromptIcon from "../icons/prompt.svg";
 import MaskIcon from "../icons/mask.svg";
-import MaxIcon from "../icons/max.svg";
-import MinIcon from "../icons/min.svg";
 import ResetIcon from "../icons/reload.svg";
 import BreakIcon from "../icons/break.svg";
 import SettingsIcon from "../icons/chat-settings.svg";
@@ -1675,21 +1673,6 @@ function _Chat() {
                 }}
               />
             </div>
-            {showMaxIcon && (
-              <div className="window-action-button">
-                <IconButton
-                  icon={config.tightBorder ? <MinIcon /> : <MaxIcon />}
-                  bordered
-                  title={Locale.Chat.Actions.FullScreen}
-                  aria={Locale.Chat.Actions.FullScreen}
-                  onClick={() => {
-                    config.update(
-                      (config) => (config.tightBorder = !config.tightBorder),
-                    );
-                  }}
-                />
-              </div>
-            )}
           </div>
 
           <PromptToast
