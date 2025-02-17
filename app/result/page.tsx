@@ -11,9 +11,8 @@ function Result() {
   const router = useRouter();
   const mbti = searchParams.get("mbti");
 
-  if (!mbti) {
-    router.push("/introduction");
-    return <div>Loading...</div>;
+  if (!mbti || mbti === "UNKNOWN") {
+    return <h1>MBTI could not be determined. Please try again.</h1>;
   }
 
   const handleProceed = () => {

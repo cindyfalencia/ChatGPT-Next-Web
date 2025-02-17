@@ -219,6 +219,13 @@ export async function POST(req: NextRequest) {
     }
 
     const analysis = fullAnalysis(chatHistory || "", questionnaire || "");
+    let mbtiType: MBTIType = "ISTJ"; // Default to ISTJ if confidence is too low
+    if (
+      isValidMBTIType(analysis.type) &&
+      analysis.confidence >= CONFIDENCE_THRESHOLD
+    ) {
+      mbtiType = analysis.type;
+    }
 
     const { data, error } = await supabase
       .from("UserData")
@@ -226,7 +233,7 @@ export async function POST(req: NextRequest) {
         {
           chat_history: chatHistory,
           questionnaire,
-          mbti: analysis.type,
+          mbti: mbtiType,
           analysis_metadata: {
             confidence: analysis.confidence,
             breakdown: analysis.breakdown,
@@ -234,7 +241,7 @@ export async function POST(req: NextRequest) {
           },
         },
       ])
-      .select("*"); // Added this to fetch and log inserted data
+      .select("*");
 
     console.log("Insert response:", data, error);
 
@@ -246,31 +253,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // const { error } = await supabase.from("UserData").insert([
-    //   {
-    //     chat_history: chatHistory,
-    //     questionnaire,
-    //     mbti: analysis.type,
-    //     analysis_metadata: {
-    //       confidence: analysis.confidence,
-    //       breakdown: analysis.breakdown,
-    //       timestamp: new Date().toISOString(),
-    //     },
-    //   },
-    // ]);
-
-    // if (error) {
-    //   console.error("Supabase insert error:", error);
-    //   return NextResponse.json(
-    //     { error: "Failed to save data to the database." },
-    //     { status: 500 },
-    //   );
-    // }
-
     return NextResponse.json(
       {
         success: true,
-        mbti: analysis.type,
+        mbti: mbtiType,
         confidence: analysis.confidence,
         breakdown: analysis.breakdown,
         dictionaryMatch: isValidMBTIType(analysis.type)
