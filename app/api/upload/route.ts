@@ -220,26 +220,52 @@ export async function POST(req: NextRequest) {
 
     const analysis = fullAnalysis(chatHistory || "", questionnaire || "");
 
-    const { error } = await supabase.from("UserData").insert([
-      {
-        chat_history: chatHistory,
-        questionnaire,
-        mbti: analysis.type,
-        analysis_metadata: {
-          confidence: analysis.confidence,
-          breakdown: analysis.breakdown,
-          timestamp: new Date().toISOString(),
+    const { data, error } = await supabase
+      .from("UserData")
+      .insert([
+        {
+          chat_history: chatHistory,
+          questionnaire,
+          mbti: analysis.type,
+          analysis_metadata: {
+            confidence: analysis.confidence,
+            breakdown: analysis.breakdown,
+            timestamp: new Date().toISOString(),
+          },
         },
-      },
-    ]);
+      ])
+      .select("*"); // Added this to fetch and log inserted data
+
+    console.log("Insert response:", data, error);
 
     if (error) {
       console.error("Supabase insert error:", error);
       return NextResponse.json(
-        { error: "Failed to save data to the database." },
+        { error: `Database insert failed: ${error.message}` }, // Log actual error message
         { status: 500 },
       );
     }
+
+    // const { error } = await supabase.from("UserData").insert([
+    //   {
+    //     chat_history: chatHistory,
+    //     questionnaire,
+    //     mbti: analysis.type,
+    //     analysis_metadata: {
+    //       confidence: analysis.confidence,
+    //       breakdown: analysis.breakdown,
+    //       timestamp: new Date().toISOString(),
+    //     },
+    //   },
+    // ]);
+
+    // if (error) {
+    //   console.error("Supabase insert error:", error);
+    //   return NextResponse.json(
+    //     { error: "Failed to save data to the database." },
+    //     { status: 500 },
+    //   );
+    // }
 
     return NextResponse.json(
       {

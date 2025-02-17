@@ -32,6 +32,12 @@ const IntroductionPage = () => {
 
       if (response.ok) {
         const { mbti } = result;
+
+        if (!mbti || mbti === "UNKNOWN") {
+          alert("Could not determine MBTI. Please provide more details.");
+          return;
+        }
+
         router.push(`/result?mbti=${mbti}`);
       } else {
         alert(`Upload failed: ${result.error || "Unknown error"}`);
