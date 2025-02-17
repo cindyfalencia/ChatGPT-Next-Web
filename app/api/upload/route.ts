@@ -132,7 +132,7 @@ const fullAnalysis = (
       (sum, score) => sum + Math.abs(score),
       0,
     ) /
-    (Object.keys(dimensionScores).length * 10);
+    (Object.keys(dimensionScores).length * 5); // Normalize confidence to a scale of 0-1
 
   // Cross-validate with dictionary
   const dictValidation = isValidMBTIType(type)
@@ -149,7 +149,7 @@ const fullAnalysis = (
       ) / Object.keys(mbtiDictionary[type].analysisCriteria).length
     : 0;
 
-  const finalConfidence = confidence * 0.6 + dictValidation * 0.4;
+  const finalConfidence = confidence * 0.7 + dictValidation * 0.3;
 
   return {
     type: finalConfidence >= CONFIDENCE_THRESHOLD ? type : "UNKNOWN",
@@ -219,13 +219,26 @@ export async function POST(req: NextRequest) {
     }
 
     const analysis = fullAnalysis(chatHistory || "", questionnaire || "");
-    let mbtiType: MBTIType = "ISTJ"; // Default to ISTJ if confidence is too low
+    let mbtiType: MBTIType = analysis.type;
+
     if (
-      isValidMBTIType(analysis.type) &&
-      analysis.confidence >= CONFIDENCE_THRESHOLD
+      !isValidMBTIType(mbtiType) ||
+      analysis.confidence < CONFIDENCE_THRESHOLD
     ) {
-      mbtiType = analysis.type;
+      console.warn(
+        `Low confidence: ${analysis.confidence}, selecting best match...`,
+      );
+
+      // Find the first valid MBTI type as a fallback
+      const bestMatch = Object.keys(mbtiDictionary).find((mbti) =>
+        isValidMBTIType(mbti),
+      ) as MBTIType;
+      if (bestMatch) mbtiType = bestMatch;
     }
+
+    console.log(
+      `Final MBTI Selection: ${mbtiType}, Confidence: ${analysis.confidence}`,
+    );
 
     const { data, error } = await supabase
       .from("UserData")
