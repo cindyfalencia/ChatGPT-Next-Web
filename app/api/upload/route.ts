@@ -82,7 +82,7 @@ const analyzeDimension = (
 const fullAnalysis = (
   chatHistory: string,
   questionnaire: string,
-): AnalysisResult => {
+): AnalysisResult & { bestMatch: MBTIType } => {
   const combinedText = `${chatHistory} ${questionnaire}`;
   const socialFeatures = extractSocialFeatures(combinedText);
   const cognitiveFeatures = extractCognitiveFeatures(combinedText);
@@ -91,17 +91,25 @@ const fullAnalysis = (
     "E/I":
       analyzeDimension(
         combinedText,
-        ["team", "social", "we", "group"],
+        ["team", "social", "we", "group", "debate", "discussion", "talk"],
         ["alone", "individual", "I", "solo"],
-        0.7,
+        1.2,
       ) +
-      (socialFeatures.weCount / (socialFeatures.iCount + 1)) * 0.3,
+      (socialFeatures.weCount / (socialFeatures.iCount + 1)) * 0.5,
     "S/N":
       analyzeDimension(
         combinedText,
         ["fact", "detail", "practical", "now"],
-        ["theory", "future", "possibility", "vision"],
-        0.8,
+        [
+          "theory",
+          "future",
+          "possibility",
+          "vision",
+          "innovation",
+          "idea",
+          "hypothesis",
+        ],
+        1.5,
       ) +
       (cognitiveFeatures.concreteTerms - cognitiveFeatures.abstractTerms) * 0.2,
     "T/F":
@@ -109,7 +117,7 @@ const fullAnalysis = (
         combinedText,
         ["logic", "objective", "analysis", "critique"],
         ["feel", "value", "harmony", "empathy"],
-        0.9,
+        1.3,
       ) +
       (cognitiveFeatures.logicalTerms - cognitiveFeatures.emotionTerms) * 0.1,
     "J/P": analyzeDimension(
@@ -126,6 +134,18 @@ const fullAnalysis = (
     dimensionScores["T/F"] > 0 ? "T" : "F",
     dimensionScores["J/P"] > 0 ? "J" : "P",
   ].join("") as MBTIType;
+
+  const bestMatch = Object.entries(dimensionScores)
+    .reduce(
+      (best, [dim, score]) =>
+        Math.abs(score) > Math.abs(dimensionScores[best as DimensionPair])
+          ? dim
+          : best,
+      "E/I",
+    )
+    .includes("E")
+    ? "ENTP"
+    : "ISTJ"; // If extroversion is strong, use ENTP
 
   const confidence =
     Object.values(dimensionScores).reduce(
@@ -149,11 +169,9 @@ const fullAnalysis = (
       ) / Object.keys(mbtiDictionary[type].analysisCriteria).length
     : 0;
 
-  const finalConfidence = confidence * 0.7 + dictValidation * 0.3;
-
   return {
-    type: finalConfidence >= CONFIDENCE_THRESHOLD ? type : "UNKNOWN",
-    confidence: finalConfidence,
+    type: confidence >= CONFIDENCE_THRESHOLD ? type : "UNKNOWN",
+    confidence: confidence,
     breakdown: {
       "E/I": {
         score: dimensionScores["E/I"],
@@ -190,6 +208,7 @@ const fullAnalysis = (
         ],
       },
     },
+    bestMatch: bestMatch as MBTIType,
   };
 };
 
@@ -219,7 +238,11 @@ export async function POST(req: NextRequest) {
     }
 
     const analysis = fullAnalysis(chatHistory || "", questionnaire || "");
-    let mbtiType: MBTIType = analysis.type;
+    let mbtiType: MBTIType =
+      isValidMBTIType(analysis.type) &&
+      analysis.confidence >= CONFIDENCE_THRESHOLD
+        ? analysis.type
+        : analysis.bestMatch;
 
     if (
       !isValidMBTIType(mbtiType) ||

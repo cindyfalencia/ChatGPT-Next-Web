@@ -12,39 +12,35 @@ type MBTITrait = {
 
 export const mbtiDictionary: Record<string, MBTITrait> = {
   ISTJ: {
-    description: "Practical and organized realist",
-    communicationStyle: "Clear and concise answers focusing on facts",
+    description: "Practical and responsible, prefers structure and planning",
+    communicationStyle: "Clear and precise, prefers facts over speculation",
     analysisCriteria: {
       "E/I": {
-        expectedScore: -0.8,
+        expectedScore: -0.9,
         indicators: [
           "solitary activities",
           "independent work",
           "quiet reflection",
         ],
-        weight: 0.9,
-      },
-      "S/N": {
-        expectedScore: 0.9,
-        indicators: [
-          "concrete details",
-          "practical solutions",
-          "present focus",
-        ],
         weight: 0.95,
       },
-      "T/F": {
-        expectedScore: 0.85,
+      "S/N": {
+        expectedScore: 0.8,
         indicators: [
-          "logical analysis",
-          "objective reasoning",
-          "systematic approach",
+          "real-world applications",
+          "practical methods",
+          "tangible results",
         ],
-        weight: 0.9,
+        weight: 0.85,
+      },
+      "T/F": {
+        expectedScore: 0.7,
+        indicators: ["logical approach", "procedural analysis", "data-driven"],
+        weight: 0.85,
       },
       "J/P": {
-        expectedScore: 0.9,
-        indicators: ["structure", "planning", "organization"],
+        expectedScore: 0.8,
+        indicators: ["strict planning", "routines", "organizational methods"],
         weight: 0.85,
       },
     },
@@ -106,31 +102,35 @@ export const mbtiDictionary: Record<string, MBTITrait> = {
     },
   },
   INTJ: {
-    description: "Strategic and analytical thinker",
-    communicationStyle: "Logical and objective responses",
+    description: "Strategic and visionary thinker, prefers long-term planning",
+    communicationStyle: "Precise, goal-driven, and analytical",
     analysisCriteria: {
       "E/I": {
-        expectedScore: -0.9,
-        indicators: ["independent thinking", "solitary focus", "introspection"],
-        weight: 0.95,
+        expectedScore: -1.0,
+        indicators: ["deep focus", "independent work", "strategic vision"],
+        weight: 1.0,
       },
       "S/N": {
-        expectedScore: -0.8,
-        indicators: ["strategic planning", "future focus", "abstract concepts"],
-        weight: 0.9,
+        expectedScore: -1.0,
+        indicators: [
+          "long-term planning",
+          "future possibilities",
+          "big-picture thinking",
+        ],
+        weight: 1.0,
       },
       "T/F": {
-        expectedScore: 0.9,
+        expectedScore: 1.0,
         indicators: [
           "logical reasoning",
           "objective analysis",
           "systematic approach",
         ],
-        weight: 0.95,
+        weight: 1.0,
       },
       "J/P": {
-        expectedScore: 0.85,
-        indicators: ["structured planning", "goal-oriented", "organized"],
+        expectedScore: 0.9,
+        indicators: ["structured execution", "planning", "task efficiency"],
         weight: 0.9,
       },
     },
@@ -291,27 +291,32 @@ export const mbtiDictionary: Record<string, MBTITrait> = {
   },
   ESFP: {
     description: "Spontaneous and enthusiastic entertainer",
-    communicationStyle: "Playful and energetic responses",
+    communicationStyle: "Playful, lively, and engaging",
     analysisCriteria: {
       "E/I": {
-        expectedScore: 0.9,
-        indicators: ["social interaction", "outgoing", "energetic"],
-        weight: 0.95,
+        expectedScore: 1.0,
+        indicators: [
+          "social fun",
+          "high energy",
+          "life of the party",
+          "expressive",
+        ],
+        weight: 1.0,
       },
       "S/N": {
-        expectedScore: 0.85,
-        indicators: ["present focus", "concrete details", "hands-on approach"],
-        weight: 0.9,
+        expectedScore: 0.8,
+        indicators: ["enjoying the moment", "thrill-seeking", "hands-on"],
+        weight: 0.85,
       },
       "T/F": {
-        expectedScore: -0.8,
-        indicators: ["emotional expression", "harmony", "empathy"],
+        expectedScore: -0.7,
+        indicators: ["emotional connection", "harmony", "caring for others"],
         weight: 0.85,
       },
       "J/P": {
-        expectedScore: -0.7,
-        indicators: ["flexibility", "spontaneity", "open-endedness"],
-        weight: 0.8,
+        expectedScore: -1.0,
+        indicators: ["improvised fun", "flexibility", "going with the flow"],
+        weight: 1.0,
       },
     },
   },
@@ -346,32 +351,48 @@ export const mbtiDictionary: Record<string, MBTITrait> = {
     communicationStyle: "Logical and abstract responses",
     analysisCriteria: {
       "E/I": {
-        expectedScore: 0.85,
-        indicators: ["social interaction", "outgoing", "energetic"],
-        weight: 0.9,
+        expectedScore: 1.0,
+        indicators: [
+          "social interaction",
+          "debate",
+          "discussion",
+          "group brainstorming",
+          "persuasion",
+          "outspoken",
+        ],
+        weight: 1.0,
       },
       "S/N": {
-        expectedScore: -0.85,
+        expectedScore: -1.0,
         indicators: [
-          "abstract concepts",
-          "theoretical exploration",
-          "future focus",
+          "future possibilities",
+          "abstract ideas",
+          "innovation",
+          "theory crafting",
+          "new perspectives",
+        ],
+        weight: 1.0,
+      },
+      "T/F": {
+        expectedScore: 0.9,
+        indicators: [
+          "logical reasoning",
+          "critical thinking",
+          "argumentation",
+          "objective analysis",
+          "challenging assumptions",
         ],
         weight: 0.9,
       },
-      "T/F": {
-        expectedScore: 0.8,
-        indicators: [
-          "logical reasoning",
-          "objective analysis",
-          "systematic approach",
-        ],
-        weight: 0.85,
-      },
       "J/P": {
-        expectedScore: -0.8,
-        indicators: ["flexibility", "open-endedness", "spontaneity"],
-        weight: 0.85,
+        expectedScore: -1.0,
+        indicators: [
+          "improvisation",
+          "spontaneous thinking",
+          "playful exploration",
+          "open-ended",
+        ],
+        weight: 0.9,
       },
     },
   },
