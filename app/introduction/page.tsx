@@ -12,11 +12,10 @@ const IntroductionPage = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const chatHistory = e.currentTarget.chatHistory.value;
     const questionnaire = e.currentTarget.questionnaire.value;
 
     try {
-      const payload = { chatHistory, questionnaire };
+      const payload = { questionnaire };
       console.log("Sending payload:", payload);
 
       const response = await fetch("/api/upload", {
@@ -54,26 +53,16 @@ const IntroductionPage = () => {
     <div className={styles.container}>
       <h1 className={styles.title}>Welcome to Personalized Chatbot</h1>
       <p className={styles.description}>
-        Help us understand your personality by providing data below:
+        Help us understand your personality by answering the question below:
       </p>
       <form className={styles.form} onSubmit={handleUpload}>
         <label className={styles.label}>
-          Chat History (optional):
-          <textarea
-            name="chatHistory"
-            rows={4}
-            cols={50}
-            placeholder="Paste your chat history here"
-            className={styles.textarea}
-          ></textarea>
-        </label>
-        <label className={styles.label}>
-          Personality Questionnaire:
+          Tell me about yourself:
           <textarea
             name="questionnaire"
             rows={6}
             cols={50}
-            placeholder="E.g., Describe your ideal weekend, your favorite activities, etc."
+            placeholder="What are your core values, motivations, and interests? What kind of things excite you or make you feel fulfilled? Feel free to include anything about your lifestyle, work, relationships, or passions—whatever feels important to you."
             className={styles.textarea}
           ></textarea>
         </label>

@@ -16,32 +16,44 @@ export const mbtiDictionary: Record<string, MBTITrait> = {
     communicationStyle: "Clear and precise, prefers facts over speculation",
     analysisCriteria: {
       "E/I": {
-        expectedScore: -0.9,
+        expectedScore: -0.85,
         indicators: [
-          "solitary activities",
-          "independent work",
-          "quiet reflection",
+          "solitary work",
+          "reserved communication",
+          "detailed planning",
+          "methodical approach",
         ],
-        weight: 0.95,
+        weight: 0.9,
       },
       "S/N": {
-        expectedScore: 0.8,
+        expectedScore: 0.75,
         indicators: [
           "real-world applications",
-          "practical methods",
-          "tangible results",
+          "practical thinking",
+          "concrete results",
+          "detail-oriented",
         ],
-        weight: 0.85,
+        weight: 0.9,
       },
       "T/F": {
         expectedScore: 0.7,
-        indicators: ["logical approach", "procedural analysis", "data-driven"],
-        weight: 0.85,
+        indicators: [
+          "logical decisions",
+          "procedural analysis",
+          "fact-based reasoning",
+          "critical thinking",
+        ],
+        weight: 0.9,
       },
       "J/P": {
-        expectedScore: 0.8,
-        indicators: ["strict planning", "routines", "organizational methods"],
-        weight: 0.85,
+        expectedScore: 0.75,
+        indicators: [
+          "strict planning",
+          "organized lifestyle",
+          "task prioritization",
+          "scheduling habits",
+        ],
+        weight: 0.9,
       },
     },
   },
@@ -106,31 +118,43 @@ export const mbtiDictionary: Record<string, MBTITrait> = {
     communicationStyle: "Precise, goal-driven, and analytical",
     analysisCriteria: {
       "E/I": {
-        expectedScore: -1.0,
-        indicators: ["deep focus", "independent work", "strategic vision"],
-        weight: 1.0,
+        expectedScore: -0.9,
+        indicators: [
+          "independent work",
+          "highly focused",
+          "thinks before speaking",
+          "reserved in group settings",
+        ],
+        weight: 0.9,
       },
       "S/N": {
-        expectedScore: -1.0,
+        expectedScore: -0.85,
         indicators: [
-          "long-term planning",
-          "future possibilities",
+          "strategic foresight",
           "big-picture thinking",
+          "long-term planning",
+          "challenges traditional views",
         ],
-        weight: 1.0,
+        weight: 0.9,
       },
       "T/F": {
-        expectedScore: 1.0,
+        expectedScore: 0.9,
         indicators: [
-          "logical reasoning",
-          "objective analysis",
-          "systematic approach",
+          "rational decision-making",
+          "logical problem-solving",
+          "objective perspective",
+          "systematic thinking",
         ],
-        weight: 1.0,
+        weight: 0.9,
       },
       "J/P": {
-        expectedScore: 0.9,
-        indicators: ["structured execution", "planning", "task efficiency"],
+        expectedScore: 0.8,
+        indicators: [
+          "goal-oriented",
+          "prefers structured plans",
+          "highly disciplined",
+          "task completion focus",
+        ],
         weight: 0.9,
       },
     },
@@ -201,27 +225,47 @@ export const mbtiDictionary: Record<string, MBTITrait> = {
   },
   INFP: {
     description: "Idealistic and empathetic dreamer",
-    communicationStyle: "Thoughtful and values-driven responses",
+    communicationStyle: "Deep and values-driven responses",
     analysisCriteria: {
       "E/I": {
         expectedScore: -0.7,
-        indicators: ["introspection", "quiet reflection", "solitary focus"],
+        indicators: [
+          "self-reflective thinking",
+          "introspective",
+          "emotionally reserved",
+          "quiet around new people",
+        ],
         weight: 0.85,
       },
       "S/N": {
-        expectedScore: -0.9,
-        indicators: ["future vision", "abstract thinking", "possibilities"],
-        weight: 0.95,
+        expectedScore: -0.85,
+        indicators: [
+          "imaginative storytelling",
+          "philosophical discussions",
+          "strong sense of purpose",
+          "creative expression",
+        ],
+        weight: 0.9,
       },
       "T/F": {
-        expectedScore: -0.85,
-        indicators: ["empathy", "values", "human connection"],
+        expectedScore: -0.9,
+        indicators: [
+          "emotional depth",
+          "strong personal values",
+          "empathetic listening",
+          "values artistic expression",
+        ],
         weight: 0.9,
       },
       "J/P": {
         expectedScore: -0.7,
-        indicators: ["flexibility", "open-endedness", "spontaneity"],
-        weight: 0.8,
+        indicators: [
+          "goes with the flow",
+          "dislikes strict rules",
+          "prefers inspiration over structure",
+          "values freedom of expression",
+        ],
+        weight: 0.85,
       },
     },
   },
@@ -512,3 +556,7 @@ export const mbtiDictionary: Record<string, MBTITrait> = {
 
 // Helper type for dictionary access
 export type MBTIType = keyof typeof mbtiDictionary;
+
+export function isValidMBTIType(type: string): type is MBTIType {
+  return Object.keys(mbtiDictionary).includes(type);
+}

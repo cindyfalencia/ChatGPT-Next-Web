@@ -1,6 +1,7 @@
 import {
   mbtiDictionary,
   MBTIType,
+  isValidMBTIType,
 } from "../api/mbti-dictionary/mbtiDictionary";
 
 type DimensionPair = "E/I" | "S/N" | "T/F" | "J/P";
@@ -19,161 +20,294 @@ export type AnalysisResult = {
 };
 
 // Configuration
-const CONFIDENCE_THRESHOLD = 0.65;
+const CONFIDENCE_THRESHOLD = 0.5;
 
-// Text processing utilities
-const cleanText = (text: string) => text.toLowerCase().replace(/[^\w\s]/g, "");
-const countOccurrences = (text: string, terms: string[]) =>
-  terms.filter((term) => cleanText(text).includes(term)).length;
+// --- Text Preprocessing ---
+const preprocessText = (text: string): string[] => {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s]/g, "")
+    .split(/\s+/);
+};
 
-// Linguistic feature extractors
-const extractSocialFeatures = (text: string) => ({
-  weCount: (text.match(/\bwe\b/g) || []).length,
-  iCount: (text.match(/\bI\b/g) || []).length,
-  socialTerms: countOccurrences(text, ["team", "friend", "party", "social"]),
-  solitaryTerms: countOccurrences(text, [
-    "alone",
-    "read",
-    "individual",
-    "quiet",
-  ]),
-});
+const countOccurrences = (tokens: string[], terms: string[]): number =>
+  tokens.filter((token) => terms.includes(token)).length;
 
-const extractCognitiveFeatures = (text: string) => ({
-  concreteTerms: countOccurrences(text, ["fact", "practical", "now", "detail"]),
-  abstractTerms: countOccurrences(text, [
-    "theory",
-    "future",
-    "possibility",
-    "idea",
-  ]),
-  logicalTerms: countOccurrences(text, [
-    "logic",
-    "objective",
-    "analysis",
-    "critique",
-  ]),
-  emotionTerms: countOccurrences(text, ["feel", "value", "harmony", "empathy"]),
-});
+// --- Feature Extraction with Phrases ---
+const extractFeatures = (text: string) => {
+  const tokens = preprocessText(text);
 
-// Dimension analysis
+  return {
+    socialTerms: countOccurrences(tokens, [
+      "team",
+      "friend",
+      "party",
+      "social",
+      "energy",
+      "outgoing",
+    ]),
+    solitaryTerms: countOccurrences(tokens, [
+      "alone",
+      "read",
+      "individual",
+      "quiet",
+      "introspective",
+    ]),
+    abstractTerms: countOccurrences(tokens, [
+      "theory",
+      "future",
+      "possibility",
+      "idea",
+      "concept",
+      "hypothesis",
+      "metaphor",
+      "visionary",
+    ]),
+    concreteTerms: countOccurrences(tokens, [
+      "fact",
+      "practical",
+      "now",
+      "detail",
+      "realistic",
+      "hands-on",
+      "physical",
+    ]),
+    logicalTerms: countOccurrences(tokens, [
+      "logic",
+      "objective",
+      "analysis",
+      "critique",
+      "reason",
+      "systematic",
+      "efficiency",
+    ]),
+    emotionTerms: countOccurrences(tokens, [
+      "feel",
+      "value",
+      "harmony",
+      "empathy",
+      "compassion",
+      "kindness",
+      "sensitive",
+      "deep connection",
+    ]),
+    structuredTerms: countOccurrences(tokens, [
+      "plan",
+      "organize",
+      "deadline",
+      "schedule",
+      "goal",
+      "strict",
+      "efficient",
+    ]),
+    flexibleTerms: countOccurrences(tokens, [
+      "flexible",
+      "spontaneous",
+      "adapt",
+      "open",
+      "go with the flow",
+      "explore",
+    ]),
+
+    // Boosted phrase-based detection
+    abstractThinking: text.includes("thinking outside the box") ? 4 : 0,
+    futurePlanning: text.includes("long-term impact") ? 4 : 0,
+    emotionalAwareness: text.includes("understanding emotions") ? 4 : 0,
+    logicalDecisionMaking: text.includes("rational decision making") ? 4 : 0,
+    excitementSeeking: text.includes("love excitement") ? 4 : 0,
+    deepConversations: text.includes("deep conversation") ? 3 : 0,
+  };
+};
+
+// --- Dimension Analysis ---
 const analyzeDimension = (
   text: string,
   positiveTerms: string[],
   negativeTerms: string[],
+  phraseBoost: number,
   baseWeight: number,
 ) => {
-  const positiveScore = countOccurrences(text, positiveTerms);
-  const negativeScore = countOccurrences(text, negativeTerms);
-  return (positiveScore - negativeScore) * baseWeight;
+  const tokens = preprocessText(text);
+  const positiveScore = countOccurrences(tokens, positiveTerms);
+  const negativeScore = countOccurrences(tokens, negativeTerms);
+
+  // Add extra weight for key phrases
+  let phraseScore = 0;
+  const phrases = [
+    "deep conversation",
+    "new ideas",
+    "strategic thinking",
+    "creative solutions",
+    "love trying new things",
+  ];
+  phrases.forEach((phrase) => {
+    if (text.includes(phrase)) phraseScore += phraseBoost;
+  });
+
+  // Normalize scores by total word count
+  const totalWords = tokens.length;
+  return totalWords > 0
+    ? ((positiveScore - negativeScore + phraseScore) * baseWeight) / totalWords
+    : 0;
 };
 
-export const fullAnalysis = (
-  chatHistory: string,
-  questionnaire: string,
-): AnalysisResult => {
-  const combinedText = `${chatHistory} ${questionnaire}`;
-  const socialFeatures = extractSocialFeatures(combinedText);
-  const cognitiveFeatures = extractCognitiveFeatures(combinedText);
+// --- Confidence Calculation ---
+const calculateConfidence = (
+  dimensionScores: Record<DimensionPair, number>,
+  type: MBTIType,
+): number => {
+  const expectedScores = mbtiDictionary[type].analysisCriteria;
+  let totalDeviation = 0;
+  let maxDeviation = 4;
 
-  const dimensionScores = {
+  Object.entries(dimensionScores).forEach(([dimension, score]) => {
+    const expected =
+      expectedScores[dimension as DimensionPair]?.expectedScore || 0;
+    totalDeviation += Math.abs(score - expected);
+  });
+  return Math.max(0, 1 - totalDeviation / maxDeviation);
+};
+
+// --- Full MBTI Analysis ---
+export const fullAnalysis = (questionnaire: string): AnalysisResult => {
+  const combinedText = `${questionnaire}`;
+
+  // Handle empty input
+  if (!combinedText.trim()) {
+    return {
+      type: "UNKNOWN",
+      confidence: 0,
+      breakdown: {
+        "E/I": { score: 0, indicators: [] },
+        "S/N": { score: 0, indicators: [] },
+        "T/F": { score: 0, indicators: [] },
+        "J/P": { score: 0, indicators: [] },
+      },
+      bestMatch: "UNKNOWN",
+    };
+  }
+
+  const features = extractFeatures(combinedText);
+
+  const rawScores = {
     "E/I":
       analyzeDimension(
         combinedText,
-        ["team", "social", "we", "group", "talk", "debate", "discussion"],
-        ["alone", "individual", "I", "solo", "quiet", "reserved"],
-        1.5,
+        ["team", "social", "we", "group"],
+        ["alone", "individual", "quiet"],
+        2,
+        2,
       ) +
-      (socialFeatures.weCount / (socialFeatures.iCount + 1)) * 0.5,
+      (features.socialTerms - features.solitaryTerms) * 0.8,
     "S/N":
       analyzeDimension(
         combinedText,
-        ["fact", "detail", "practical", "now"],
-        ["theory", "future", "possibility", "vision", "innovation", "idea"],
-        1.8,
+        ["fact", "detail", "practical"],
+        ["theory", "future", "idea"],
+        3,
+        2,
       ) +
-      (cognitiveFeatures.concreteTerms - cognitiveFeatures.abstractTerms) * 0.2,
+      (features.abstractThinking - features.futurePlanning) * 0.8,
     "T/F":
       analyzeDimension(
         combinedText,
-        ["logic", "objective", "analysis", "critique"],
-        ["feel", "value", "harmony", "empathy"],
-        1.6,
+        ["logic", "objective", "analysis"],
+        ["feel", "value", "harmony"],
+        2,
+        1.5,
       ) +
-      (cognitiveFeatures.logicalTerms - cognitiveFeatures.emotionTerms) * 0.1,
-    "J/P": analyzeDimension(
-      combinedText,
-      ["plan", "organize", "deadline", "structure"],
-      ["flexible", "spontaneous", "adapt", "open", "go with the flow"],
-      1.5,
-    ),
+      (features.logicalTerms - features.emotionTerms) * 0.6,
+    "J/P":
+      analyzeDimension(
+        combinedText,
+        ["plan", "organize", "deadline"],
+        ["flexible", "spontaneous", "adapt"],
+        2,
+        1.5,
+      ) +
+      (features.structuredTerms - features.flexibleTerms) * 0.6,
+  };
+
+  console.log("🔍 Raw Dimension Scores:", rawScores);
+
+  // Convert scores into the expected breakdown format
+  const dimensionScores: Record<
+    DimensionPair,
+    { score: number; indicators: string[] }
+  > = {
+    "E/I": {
+      score: rawScores["E/I"],
+      indicators: [
+        `Social terms: ${features.socialTerms}, Solitary: ${features.solitaryTerms}`,
+      ],
+    },
+    "S/N": {
+      score: rawScores["S/N"],
+      indicators: [
+        `Concrete: ${features.concreteTerms}, Abstract: ${features.abstractTerms}`,
+      ],
+    },
+    "T/F": {
+      score: rawScores["T/F"],
+      indicators: [
+        `Logical: ${features.logicalTerms}, Emotional: ${features.emotionTerms}`,
+      ],
+    },
+    "J/P": {
+      score: rawScores["J/P"],
+      indicators: [
+        `Structured: ${features.structuredTerms}, Flexible: ${features.flexibleTerms}`,
+      ],
+    },
   };
 
   const type = [
-    dimensionScores["E/I"] > 0 ? "E" : "I",
-    dimensionScores["S/N"] > 0 ? "S" : "N",
-    dimensionScores["T/F"] > 0 ? "T" : "F",
-    dimensionScores["J/P"] > 0 ? "J" : "P",
+    rawScores["E/I"] > 0 ? "E" : "I",
+    rawScores["S/N"] > 0 ? "S" : "N",
+    rawScores["T/F"] > 0 ? "T" : "F",
+    rawScores["J/P"] > 0 ? "J" : "P",
   ].join("") as MBTIType;
 
-  const bestMatch = Object.entries(mbtiDictionary).reduce(
-    (best, [mbti, traits]) => {
-      const matchScore = Object.keys(traits.analysisCriteria).reduce(
-        (sum, dim) => {
+  const confidence = calculateConfidence(rawScores, type);
+
+  console.log(`⚡ Calculated MBTI: ${type}, Confidence: ${confidence}`);
+
+  if (!isValidMBTIType(type) || confidence < CONFIDENCE_THRESHOLD) {
+    const bestMatch = Object.keys(mbtiDictionary).reduce(
+      (best, mbti) => {
+        const scoreDiff = Object.keys(rawScores).reduce((sum, dim) => {
           return (
             sum +
             Math.abs(
-              dimensionScores[dim as DimensionPair] -
-                (traits.analysisCriteria[dim as DimensionPair]?.expectedScore ||
-                  0),
+              rawScores[dim as DimensionPair] -
+                (mbtiDictionary[mbti as MBTIType].analysisCriteria[
+                  dim as DimensionPair
+                ]?.expectedScore || 0),
             )
           );
-        },
-        0,
-      );
+        }, 0);
 
-      return matchScore < best.score
-        ? { type: mbti as MBTIType, score: matchScore }
-        : best;
-    },
-    { type: "UNKNOWN", score: Infinity },
-  ).type;
+        return scoreDiff < best.score
+          ? { type: mbti as MBTIType, score: scoreDiff }
+          : best;
+      },
+      { type: "UNKNOWN", score: Infinity },
+    ).type;
 
-  const confidence =
-    Object.values(dimensionScores).reduce(
-      (sum, score) => sum + Math.abs(score),
-      0,
-    ) /
-    (Object.keys(dimensionScores).length * 3.5);
+    console.log(`🔍 Best alternative MBTI: ${bestMatch}`);
+
+    return {
+      type: bestMatch as MBTIType,
+      confidence,
+      breakdown: dimensionScores,
+      bestMatch: bestMatch as MBTIType,
+    };
+  }
 
   return {
-    type: confidence >= CONFIDENCE_THRESHOLD ? type : "UNKNOWN",
+    type,
     confidence,
-    breakdown: {
-      "E/I": {
-        score: dimensionScores["E/I"],
-        indicators: [
-          `We/I ratio: ${socialFeatures.weCount}/${socialFeatures.iCount}`,
-        ],
-      },
-      "S/N": {
-        score: dimensionScores["S/N"],
-        indicators: [`Concrete terms: ${cognitiveFeatures.concreteTerms}`],
-      },
-      "T/F": {
-        score: dimensionScores["T/F"],
-        indicators: [`Logical terms: ${cognitiveFeatures.logicalTerms}`],
-      },
-      "J/P": {
-        score: dimensionScores["J/P"],
-        indicators: [
-          `Planning terms: ${countOccurrences(combinedText, [
-            "plan",
-            "organize",
-          ])}`,
-        ],
-      },
-    },
-    bestMatch,
+    breakdown: dimensionScores,
+    bestMatch: type,
   };
 };

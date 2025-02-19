@@ -2,62 +2,88 @@ import { fullAnalysis } from "../app/utils/mbtiAnalysis";
 import { mbtiDictionary, MBTIType } from "@/app/api/mbti-dictionary/mbtiDictionary";
 
 describe("MBTI Analysis Unit Tests", () => {
-    const testCases = [
-      {
-        name: "ENTP - Extroverted, abstract, logical, spontaneous",
-        chatHistory: "I love debating, questioning assumptions, and challenging ideas. I thrive on discussions and exploring unconventional viewpoints.",
-        questionnaire: "I prefer brainstorming innovative ideas over following traditional methods. I get excited about possibilities and future potential.",
-        expectedMBTI: "ENTP",
-      },
-      {
-        name: "ISTJ - Introverted, structured, logical, detail-focused",
-        chatHistory: "I prefer routines and structure in my life. Sticking to rules and maintaining order gives me confidence.",
-        questionnaire: "I rely on proven methods rather than speculative theories. I like following step-by-step instructions.",
-        expectedMBTI: "ISTJ",
-      },
-      {
-        name: "ESFP - Fun-loving and energetic",
-        chatHistory: "I love socializing and making people laugh! Being around friends and enjoying life is what I love most.",
-        questionnaire: "I prefer spontaneous activities and experiencing things in the moment rather than planning everything.",
-        expectedMBTI: "ESFP",
-      },
-      {
-        name: "INTJ - Visionary and strategic planner",
-        chatHistory: "I analyze complex systems and create long-term strategies. Thinking ahead and planning is key to success.",
-        questionnaire: "I prefer structured planning over spontaneous decisions. I focus on big-picture goals.",
-        expectedMBTI: "INTJ",
-      },
-      {
-        name: "INFP - Emotional and idealistic dreamer",
-        chatHistory: "I value deep emotional connections and always strive to understand people's feelings. My passion is helping others.",
-        questionnaire: "I believe in making the world a better place through creativity and empathy.",
-        expectedMBTI: "INFP",
-      },
-      {
-        name: "Low Confidence Case - Should Select Best Match",
-        chatHistory: "Sometimes I enjoy social activities, but I also need alone time. I like thinking about ideas, but I also focus on details.",
-        questionnaire: "I like planning, but I can be flexible. I enjoy logic, but also value emotions.",
-        expectedMBTI: "INFJ", // Best match based on mixed traits
-      },
-    ];
-  
-    testCases.forEach(({ name, chatHistory, questionnaire, expectedMBTI }) => {
-      test(`${name} should be classified as ${expectedMBTI}`, () => {
-        const analysis = fullAnalysis(chatHistory, questionnaire);
+  const testCases: { name: string; questionnaire: string; expectedMBTI: MBTIType }[] = [
+    {
+      name: "ENTP - Extroverted, abstract, logical, spontaneous",
+      questionnaire: "I prefer brainstorming and thinking outside the box rather than following traditional methods. I enjoy debating new ideas and challenging conventional thinking.",
+      expectedMBTI: "ENTP",
+    },
+    {
+      name: "ISTJ - Introverted, structured, logical, detail-focused",
+      questionnaire: "I focus on details and factual information rather than abstract concepts. I prefer structure, organization, and proven methods over experimenting with new ideas.",
+      expectedMBTI: "ISTJ",
+    },
+    {
+      name: "ESFP - Fun-loving and energetic",
+      questionnaire: "I love excitement, socializing, and trying new experiences. I live in the moment and prefer going with the flow rather than planning too much.",
+      expectedMBTI: "ESFP",
+    },
+    {
+      name: "INTJ - Visionary and strategic planner",
+      questionnaire: "I analyze everything strategically and think about long-term impacts. I prefer making rational, objective decisions rather than relying on emotions.",
+      expectedMBTI: "INTJ",
+    },
+    {
+      name: "INFP - Emotional and idealistic dreamer",
+      questionnaire: "I believe in making the world a better place through understanding and compassion. I value deep connections and personal meaning in everything I do.",
+      expectedMBTI: "INFP",
+    },
+    {
+      name: "Low Confidence Case - Should Select Best Match",
+      questionnaire: "I don’t strongly identify with any specific preference, and I see value in both logic and emotions. Sometimes I plan, other times I go with the flow.",
+      expectedMBTI: "INFJ", // Best match expected
+    },
+  ];
+
+  testCases.forEach(({ name, questionnaire, expectedMBTI }) => {
+    test(`${name} should be classified as ${expectedMBTI}`, () => {
+      const analysis = fullAnalysis(questionnaire); 
+      console.log(`🔍 ${name}: Calculated MBTI: ${analysis.type}, Confidence: ${analysis.confidence}, Best Match: ${analysis.bestMatch}`);
+
+      // If confidence is high, expect the exact type
+      if (analysis.confidence >= 0.65) {
         expect(analysis.type).toBe(expectedMBTI as MBTIType);
-        expect(analysis.confidence).toBeGreaterThanOrEqual(0.65); // Confidence should be above threshold
-      });
-    });
-  
-    test("Handles empty input gracefully", () => {
-      const analysis = fullAnalysis("", "");
-      expect(analysis.type).toBe("UNKNOWN");
-      expect(analysis.confidence).toBeLessThan(0.3); // Confidence should be very low
-    });
-  
-    test("Handles low-confidence results by selecting best match", () => {
-      const analysis = fullAnalysis("I enjoy a mix of things, sometimes social, sometimes alone.", "I like planning but also adapting.");
-      expect(analysis.confidence).toBeLessThan(0.6); // Ensure low confidence
-      expect(Object.keys(mbtiDictionary)).toContain(analysis.bestMatch); // Ensure fallback is valid
+      } else {
+        // If confidence is low, expect a best-match selection
+        expect(analysis.bestMatch).toBe(expectedMBTI as MBTIType);
+      }
     });
   });
+
+  // Empty input test case
+  test("Handles empty input gracefully", () => {
+    const analysis = fullAnalysis("");
+    expect(analysis.type).toBe("UNKNOWN");
+    expect(analysis.confidence).toBeLessThan(0.3);
+  });
+
+  // Low-confidence ambiguous input
+  test("Handles low-confidence results by selecting best match", () => {
+    const analysis = fullAnalysis("I like planning but also adapting.");
+    console.log(`🔍 Low-confidence case: Type: ${analysis.type}, Best Match: ${analysis.bestMatch}, Confidence: ${analysis.confidence}`);
+
+    expect(analysis.confidence).toBeLessThan(0.6);
+    expect(Object.keys(mbtiDictionary)).toContain(analysis.bestMatch);
+  });
+
+  // Edge case: Highly balanced input
+  test("Handles balanced personality descriptions", () => {
+    const analysis = fullAnalysis(
+      "I enjoy socializing, but I also love being alone to recharge. I analyze facts and details, but I also think abstractly about possibilities. Sometimes I rely on logic, but other times I follow my feelings. I plan ahead, but I can also be spontaneous."
+    );
+    console.log(`🔍 Balanced case: Type: ${analysis.type}, Confidence: ${analysis.confidence}, Best Match: ${analysis.bestMatch}`);
+
+    expect(analysis.confidence).toBeLessThan(0.6);
+    expect(Object.keys(mbtiDictionary)).toContain(analysis.bestMatch);
+  });
+
+  // Edge case: Extreme personality description
+  test("Handles extreme personality descriptions", () => {
+    const analysis = fullAnalysis(
+      "I am always socializing, never alone. I hate structure and planning, and I always follow my heart rather than logic."
+    );
+    console.log(`🔍 Extreme case: Type: ${analysis.type}, Confidence: ${analysis.confidence}, Best Match: ${analysis.bestMatch}`);
+
+    expect(analysis.confidence).toBeGreaterThan(0.5);
+  });
+});

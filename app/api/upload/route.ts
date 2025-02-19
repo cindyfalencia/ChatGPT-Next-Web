@@ -24,16 +24,16 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { chatHistory, questionnaire } = await req.json();
+    const { questionnaire } = await req.json();
 
-    if (!chatHistory || !questionnaire) {
+    if (!questionnaire) {
       return NextResponse.json(
-        { error: "At least one of chatHistory or questionnaire is required." },
+        { error: "Questionnaire is required." },
         { status: 400 },
       );
     }
 
-    const analysis = fullAnalysis(chatHistory || "", questionnaire || "");
+    const analysis = fullAnalysis(questionnaire || "");
 
     // Determine the MBTI type (use best match if confidence is too low)
     let mbtiType: MBTIType =
@@ -47,7 +47,6 @@ export async function POST(req: NextRequest) {
       .from("UserData")
       .insert([
         {
-          chat_history: chatHistory,
           questionnaire,
           mbti: mbtiType,
           analysis_metadata: {
