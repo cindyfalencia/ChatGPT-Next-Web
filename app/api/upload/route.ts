@@ -1,216 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { fullAnalysis } from "@/app/utils/mbtiAnalysis";
 import { mbtiDictionary, MBTIType } from "../mbti-dictionary/mbtiDictionary";
 
 // Initialize Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Enhanced analysis types
-type DimensionPair = "E/I" | "S/N" | "T/F" | "J/P";
-function isDimensionPair(dim: string): dim is DimensionPair {
-  return ["E/I", "S/N", "T/F", "J/P"].includes(dim);
-}
-
-type AnalysisResult = {
-  type: MBTIType | "UNKNOWN";
-  confidence: number;
-  breakdown: Record<
-    DimensionPair,
-    {
-      score: number;
-      indicators: string[];
-    }
-  >;
-};
-
-// Configuration
-const ANALYSIS_WEIGHTS = {
-  chatHistory: 0.7,
-  questionnaire: 0.3,
-};
-const CONFIDENCE_THRESHOLD = 0.65;
-
-// Text processing utilities
-const cleanText = (text: string) => text.toLowerCase().replace(/[^\w\s]/g, "");
-const countOccurrences = (text: string, terms: string[]) =>
-  terms.filter((term) => cleanText(text).includes(term)).length;
-
-// Linguistic feature extractors
-const extractSocialFeatures = (text: string) => ({
-  weCount: (text.match(/\bwe\b/g) || []).length,
-  iCount: (text.match(/\bI\b/g) || []).length,
-  socialTerms: countOccurrences(text, ["team", "friend", "party", "social"]),
-  solitaryTerms: countOccurrences(text, [
-    "alone",
-    "read",
-    "individual",
-    "quiet",
-  ]),
-});
-
-const extractCognitiveFeatures = (text: string) => ({
-  concreteTerms: countOccurrences(text, ["fact", "practical", "now", "detail"]),
-  abstractTerms: countOccurrences(text, [
-    "theory",
-    "future",
-    "possibility",
-    "idea",
-  ]),
-  logicalTerms: countOccurrences(text, [
-    "logic",
-    "objective",
-    "analysis",
-    "critique",
-  ]),
-  emotionTerms: countOccurrences(text, ["feel", "value", "harmony", "empathy"]),
-});
-
-// Dimension analysis
-const analyzeDimension = (
-  text: string,
-  positiveTerms: string[],
-  negativeTerms: string[],
-  baseWeight: number,
-) => {
-  const positiveScore = countOccurrences(text, positiveTerms);
-  const negativeScore = countOccurrences(text, negativeTerms);
-  return (positiveScore - negativeScore) * baseWeight;
-};
-
-const fullAnalysis = (
-  chatHistory: string,
-  questionnaire: string,
-): AnalysisResult & { bestMatch: MBTIType } => {
-  const combinedText = `${chatHistory} ${questionnaire}`;
-  const socialFeatures = extractSocialFeatures(combinedText);
-  const cognitiveFeatures = extractCognitiveFeatures(combinedText);
-
-  const dimensionScores = {
-    "E/I":
-      analyzeDimension(
-        combinedText,
-        ["team", "social", "we", "group", "debate", "discussion", "talk"],
-        ["alone", "individual", "I", "solo"],
-        1.2,
-      ) +
-      (socialFeatures.weCount / (socialFeatures.iCount + 1)) * 0.5,
-    "S/N":
-      analyzeDimension(
-        combinedText,
-        ["fact", "detail", "practical", "now"],
-        [
-          "theory",
-          "future",
-          "possibility",
-          "vision",
-          "innovation",
-          "idea",
-          "hypothesis",
-        ],
-        1.5,
-      ) +
-      (cognitiveFeatures.concreteTerms - cognitiveFeatures.abstractTerms) * 0.2,
-    "T/F":
-      analyzeDimension(
-        combinedText,
-        ["logic", "objective", "analysis", "critique"],
-        ["feel", "value", "harmony", "empathy"],
-        1.3,
-      ) +
-      (cognitiveFeatures.logicalTerms - cognitiveFeatures.emotionTerms) * 0.1,
-    "J/P": analyzeDimension(
-      combinedText,
-      ["plan", "organize", "deadline", "structure"],
-      ["flexible", "spontaneous", "adapt", "open"],
-      0.85,
-    ),
-  };
-
-  const type = [
-    dimensionScores["E/I"] > 0 ? "E" : "I",
-    dimensionScores["S/N"] > 0 ? "S" : "N",
-    dimensionScores["T/F"] > 0 ? "T" : "F",
-    dimensionScores["J/P"] > 0 ? "J" : "P",
-  ].join("") as MBTIType;
-
-  const bestMatch = Object.entries(dimensionScores)
-    .reduce(
-      (best, [dim, score]) =>
-        Math.abs(score) > Math.abs(dimensionScores[best as DimensionPair])
-          ? dim
-          : best,
-      "E/I",
-    )
-    .includes("E")
-    ? "ENTP"
-    : "ISTJ"; // If extroversion is strong, use ENTP
-
-  const confidence =
-    Object.values(dimensionScores).reduce(
-      (sum, score) => sum + Math.abs(score),
-      0,
-    ) /
-    (Object.keys(dimensionScores).length * 5); // Normalize confidence to a scale of 0-1
-
-  // Cross-validate with dictionary
-  const dictValidation = isValidMBTIType(type)
-    ? Object.entries(mbtiDictionary[type].analysisCriteria).reduce(
-        (sum, [dim, criteria]) => {
-          const scoreMatch =
-            1 -
-            Math.abs(
-              dimensionScores[dim as DimensionPair] - criteria.expectedScore,
-            );
-          return sum + scoreMatch;
-        },
-        0,
-      ) / Object.keys(mbtiDictionary[type].analysisCriteria).length
-    : 0;
-
-  return {
-    type: confidence >= CONFIDENCE_THRESHOLD ? type : "UNKNOWN",
-    confidence: confidence,
-    breakdown: {
-      "E/I": {
-        score: dimensionScores["E/I"],
-        indicators: [
-          `Social references: ${socialFeatures.socialTerms}`,
-          `We/I ratio: ${socialFeatures.weCount}/${socialFeatures.iCount}`,
-        ],
-      },
-      "S/N": {
-        score: dimensionScores["S/N"],
-        indicators: [
-          `Concrete terms: ${cognitiveFeatures.concreteTerms}`,
-          `Abstract terms: ${cognitiveFeatures.abstractTerms}`,
-        ],
-      },
-      "T/F": {
-        score: dimensionScores["T/F"],
-        indicators: [
-          `Logical terms: ${cognitiveFeatures.logicalTerms}`,
-          `Emotion terms: ${cognitiveFeatures.emotionTerms}`,
-        ],
-      },
-      "J/P": {
-        score: dimensionScores["J/P"],
-        indicators: [
-          `Planning terms: ${countOccurrences(combinedText, [
-            "plan",
-            "organize",
-          ])}`,
-          `Flexibility terms: ${countOccurrences(combinedText, [
-            "flexible",
-            "spontaneous",
-          ])}`,
-        ],
-      },
-    },
-    bestMatch: bestMatch as MBTIType,
-  };
-};
 
 const createResponseHeaders = () => {
   return new Headers({
@@ -238,30 +34,14 @@ export async function POST(req: NextRequest) {
     }
 
     const analysis = fullAnalysis(chatHistory || "", questionnaire || "");
+
+    // Determine the MBTI type (use best match if confidence is too low)
     let mbtiType: MBTIType =
-      isValidMBTIType(analysis.type) &&
-      analysis.confidence >= CONFIDENCE_THRESHOLD
+      isValidMBTIType(analysis.type) && analysis.confidence >= 0.65
         ? analysis.type
         : analysis.bestMatch;
 
-    if (
-      !isValidMBTIType(mbtiType) ||
-      analysis.confidence < CONFIDENCE_THRESHOLD
-    ) {
-      console.warn(
-        `Low confidence: ${analysis.confidence}, selecting best match...`,
-      );
-
-      // Find the first valid MBTI type as a fallback
-      const bestMatch = Object.keys(mbtiDictionary).find((mbti) =>
-        isValidMBTIType(mbti),
-      ) as MBTIType;
-      if (bestMatch) mbtiType = bestMatch;
-    }
-
-    console.log(
-      `Final MBTI Selection: ${mbtiType}, Confidence: ${analysis.confidence}`,
-    );
+    console.log(`Final MBTI: ${mbtiType}, Confidence: ${analysis.confidence}`);
 
     const { data, error } = await supabase
       .from("UserData")
