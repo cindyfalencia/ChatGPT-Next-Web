@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./introduction.module.scss";
-import { v4 as uuidv4 } from "uuid"; // Generate unique ID
+import { v4 as uuidv4 } from "uuid";
 
 const IntroductionPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +40,7 @@ const IntroductionPage = () => {
     try {
       const formData = new FormData();
       formData.append("questionnaire", questionnaire);
-      formData.append("id", userId); // Use generated user ID
+      formData.append("userId", userId);
 
       console.log("Sending payload:", { questionnaire, userId });
 

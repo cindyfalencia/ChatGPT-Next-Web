@@ -23,6 +23,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    console.log("✅ Received Data:", { questionnaire, userId });
+
     // Step 1: Process MBTI Analysis
     const analysis = fullAnalysis(questionnaire);
     let mbtiType: MBTIType =
