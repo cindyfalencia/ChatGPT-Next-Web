@@ -53,9 +53,9 @@ const IntroductionPage = () => {
       console.log("API response:", result);
 
       if (response.ok) {
-        const { mbti, confidence } = result;
+        const { mbti } = result;
 
-        if (!mbti || mbti === "UNKNOWN" || confidence < 0.5) {
+        if (!mbti || mbti === "UNKNOWN") {
           alert(
             "Could not determine your MBTI with confidence. Try again with more details.",
           );
