@@ -14,15 +14,19 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Missing userId" }, { status: 400 });
   }
 
+  // Fetch avatar URL from UserData table
   const { data, error } = await supabase
-    .from("avatars")
-    .select("glb_url")
-    .eq("user_id", userId)
+    .from("UserData")
+    .select("avatar")
+    .eq("id", userId)
     .single();
 
-  if (error) {
-    return NextResponse.json({ error: "User GLB not found" }, { status: 404 });
+  if (error || !data?.avatar) {
+    return NextResponse.json(
+      { error: "No avatar found for this user" },
+      { status: 404 },
+    );
   }
 
-  return NextResponse.json({ glb_url: data.glb_url }, { status: 200 });
+  return NextResponse.json({ glb_url: data.avatar }, { status: 200 });
 }

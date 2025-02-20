@@ -2,7 +2,7 @@ import {
   mbtiDictionary,
   MBTIType,
   isValidMBTIType,
-} from "../api/mbti-dictionary/mbtiDictionary";
+} from "@/app/api/mbti/dictionary";
 
 type DimensionPair = "E/I" | "S/N" | "T/F" | "J/P";
 

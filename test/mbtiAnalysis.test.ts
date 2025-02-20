@@ -1,5 +1,5 @@
-import { fullAnalysis } from "../app/utils/mbtiAnalysis";
-import { mbtiDictionary, MBTIType } from "@/app/api/mbti-dictionary/mbtiDictionary";
+import { fullAnalysis } from "@/app/api/mbti/analysis";
+import { mbtiDictionary, MBTIType } from "@/app/api/mbti/dictionary";
 
 describe("MBTI Analysis Unit Tests", () => {
   const testCases: { name: string; questionnaire: string; expectedMBTI: MBTIType }[] = [

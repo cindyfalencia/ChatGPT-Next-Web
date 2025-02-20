@@ -1,39 +1,64 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./introduction.module.scss";
+import { v4 as uuidv4 } from "uuid"; // Generate unique ID
 
 const IntroductionPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
+
+  // Generate or retrieve user ID from local storage
+  useEffect(() => {
+    let storedUserId = localStorage.getItem("userId");
+    if (!storedUserId) {
+      storedUserId = uuidv4(); // Generate a new unique ID
+      localStorage.setItem("userId", storedUserId);
+    }
+    setUserId(storedUserId);
+  }, []);
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const questionnaire = e.currentTarget.questionnaire.value;
+    if (!userId) {
+      alert("Error: Unable to generate user ID.");
+      setIsLoading(false);
+      return;
+    }
+
+    const questionnaire = e.currentTarget.questionnaire.value.trim();
+    if (!questionnaire) {
+      alert("Please provide a response to the questionnaire.");
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const payload = { questionnaire };
-      console.log("Sending payload:", payload);
+      const formData = new FormData();
+      formData.append("questionnaire", questionnaire);
+      formData.append("userId", userId); // Use generated user ID
 
-      const response = await fetch("/api/upload", {
+      console.log("Sending payload:", { questionnaire, userId });
+
+      const response = await fetch("/api/user/upload", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       const result = await response.json();
       console.log("API response:", result);
 
       if (response.ok) {
-        const { mbti } = result;
+        const { mbti, confidence } = result;
 
-        if (!mbti || mbti === "UNKNOWN") {
-          alert("Could not determine MBTI. Please provide more details.");
+        if (!mbti || mbti === "UNKNOWN" || confidence < 0.5) {
+          alert(
+            "Could not determine your MBTI with confidence. Try again with more details.",
+          );
           return;
         }
 
