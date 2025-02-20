@@ -2,17 +2,20 @@
 
 import { Analytics } from "@vercel/analytics/react";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getServerSideConfig } from "./config/server";
 
 const serverConfig = getServerSideConfig();
 
 export default function App() {
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    router.push("/introduction");
-  }, [router]);
+    if (pathname === "/") {
+      router.push("/introduction");
+    }
+  }, [pathname, router]);
 
   return (
     <>
