@@ -20,6 +20,8 @@ export async function POST(req: Request) {
     }
 
     const filePath = `avatars/${userId}.glb`;
+
+    // Upload file
     const { data, error } = await supabase.storage
       .from("avatars")
       .upload(filePath, file, { contentType: "model/gltf-binary" });
@@ -32,10 +34,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // Get public URL
-    const { publicUrl } = supabase.storage
+    const { data: urlData } = supabase.storage
       .from("avatars")
       .getPublicUrl(filePath);
+
+    const publicUrl = urlData.publicUrl;
 
     // Save to DB
     await supabase
@@ -44,6 +47,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: publicUrl }, { status: 200 });
   } catch (error) {
+    console.error("Server error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
