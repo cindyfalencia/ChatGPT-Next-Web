@@ -58,22 +58,20 @@ export async function POST(req: NextRequest) {
     }
 
     // Step 3: Store MBTI Result & Avatar URL in Database
+    console.log("🔥 Upserting UserData:");
     const { error: dbError } = await supabase
       .from("UserData")
-      .upsert(
-        {
-          id: userId,
-          questionnaire,
-          mbti: mbtiType,
-          avatar: avatarUrl, // Store avatar if uploaded
-          analysis_metadata: {
-            confidence: analysis.confidence,
-            breakdown: analysis.breakdown,
-            timestamp: new Date().toISOString(),
-          },
-        },
-        { onConflict: "id" },
-      )
+      .upsert({
+        id: userId,
+        questionnaire,
+        mbti: mbtiType,
+        avatar: avatarUrl,
+        analysis_metadata: JSON.stringify({
+          confidence: analysis.confidence,
+          breakdown: analysis.breakdown,
+          timestamp: new Date().toISOString(),
+        }),
+      })
       .select("*");
 
     if (dbError) {

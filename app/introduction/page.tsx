@@ -40,7 +40,7 @@ const IntroductionPage = () => {
     try {
       const formData = new FormData();
       formData.append("questionnaire", questionnaire);
-      formData.append("userId", userId); // Use generated user ID
+      formData.append("id", userId); // Use generated user ID
 
       console.log("Sending payload:", { questionnaire, userId });
 
