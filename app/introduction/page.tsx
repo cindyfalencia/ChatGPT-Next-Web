@@ -10,14 +10,20 @@ const IntroductionPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
 
-  // Generate or retrieve user ID from local storage
   useEffect(() => {
+    // Prevent redirection if already on "/auth"
+    if (window.location.hash === "#/auth") return;
+
     let storedUserId = localStorage.getItem("userId");
     if (!storedUserId) {
-      storedUserId = uuidv4(); // Generate a new unique ID
+      storedUserId = uuidv4();
       localStorage.setItem("userId", storedUserId);
     }
     setUserId(storedUserId);
+  }, []);
+
+  useEffect(() => {
+    console.log("Current hash:", window.location.hash);
   }, []);
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
