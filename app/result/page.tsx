@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import styles from "./result.module.scss";
-import { mbtiDictionary } from "@/app/api/mbti-dictionary/mbtiDictionary";
+import { mbtiDictionary } from "@/app/api/mbti/dictionary";
 import { useRouter } from "next/navigation";
 
 function Result() {
