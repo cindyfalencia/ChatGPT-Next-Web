@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
-import { Avatar3d } from "./chat/avatar/avtar3d";
+import { Avatar3d } from "./avatar/avtar3d";
 import SendWhiteIcon from "../icons/send-white.svg";
 import BrainIcon from "../icons/brain.svg";
 import RenameIcon from "../icons/rename.svg";
