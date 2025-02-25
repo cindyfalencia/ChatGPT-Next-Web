@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { getAvatarUrl } from "@/utils/getAvatar";
+import { getAvatarUrl } from "../../../app/utils/get-avatar";
 
 export function Avatar3d(props) {
   const group = useRef();
