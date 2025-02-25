@@ -20,7 +20,8 @@
   .iframeContainer {
     width: 100%;
     max-width: 800px;
-    height: 500px;
+    min-height: 500px;
+    height: 80vh;
     margin: 0 auto;
     border: 1px solid var(--border-in-light);
     border-radius: 10px;

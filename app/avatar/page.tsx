@@ -1,8 +1,22 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import styles from "./avatar.module.scss";
 
 const AvatarPage = () => {
+  const [iframeHeight, setIframeHeight] = useState("800px");
+
+  useEffect(() => {
+    const updateHeight = () => {
+      setIframeHeight(`${window.innerHeight * 0.8}px`); // 80% of viewport height
+    };
+
+    window.addEventListener("resize", updateHeight);
+    updateHeight();
+
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
+
   const handleNext = () => {
     // Redirect to the home page after customization
     window.location.href = "/home";
@@ -20,7 +34,7 @@ const AvatarPage = () => {
           title="Avatar Customization"
           style={{
             width: "100%",
-            height: "800px",
+            height: iframeHeight,
             border: "none",
           }}
         ></iframe>
