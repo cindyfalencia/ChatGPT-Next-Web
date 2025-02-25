@@ -8,25 +8,33 @@ export function Avatar3d({ userId, ...props }) {
   const group = useRef();
   const { scene } = useThree();
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Use default model first, update when avatar URL is loaded
+  // ✅ Always call useGLTF at the top level
   const gltf = useGLTF(avatarUrl || "/fix.glb");
   const { nodes, materials, animations } = gltf;
-  const { actions } = useAnimations(animations, group);
+  const { actions } = useAnimations(animations, group); // ✅ Always call at the top level
 
-  // Fetch the dynamic avatar URL from Supabase
+  // ✅ Fetch avatar URL from Supabase
   useEffect(() => {
     const fetchAvatar = async () => {
       if (!userId) return;
       const url = await getAvatarUrl(userId);
-      if (url) setAvatarUrl(url);
+      if (url) {
+        console.log("✅ Loaded avatar URL:", url);
+        setAvatarUrl(url);
+      } else {
+        console.warn("⚠️ No avatar found, using fallback model.");
+      }
+      setLoading(false); // ✅ Mark loading as complete
     };
 
     fetchAvatar();
   }, [userId]);
 
+  // ✅ Ensure the animation runs
   useEffect(() => {
-    if (actions) {
+    if (actions?.Waving) {
       actions.Waving.play();
     }
   }, [actions]);
@@ -60,6 +68,11 @@ export function Avatar3d({ userId, ...props }) {
       }, 4000);
     }
   };
+
+  if (loading || !nodes || !materials) {
+    console.log("⏳ Loading model...");
+    return null; // Prevent rendering until model is ready
+  }
 
   return (
     <group ref={group} {...props} dispose={null} onClick={handleStumble}>
