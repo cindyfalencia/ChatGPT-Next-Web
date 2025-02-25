@@ -20,7 +20,7 @@ const AvatarPage = () => {
           title="Avatar Customization"
           style={{
             width: "100%",
-            height: "600px",
+            height: "800px",
             border: "none",
           }}
         ></iframe>
