@@ -38,6 +38,7 @@ const AvatarUpload = () => {
     formData.append("file", file);
 
     try {
+      console.log("🔹 Sending request to API...");
       const response = await fetch("/api/user/upload-avatar", {
         method: "POST",
         body: formData,
@@ -46,12 +47,12 @@ const AvatarUpload = () => {
       const result = await response.json();
       console.log("Upload result:", result);
 
-      if (result.success) {
-        alert("Avatar uploaded successfully!");
-        router.push("/home"); // Redirect after success
-      } else {
-        alert(`Upload failed: ${result.error || "Unknown error"}`);
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${result.error || "Unknown error"}`);
       }
+
+      alert("Avatar uploaded successfully!");
+      router.push("/home");
     } catch (error) {
       console.error("Upload error:", error);
       alert("An error occurred during upload.");

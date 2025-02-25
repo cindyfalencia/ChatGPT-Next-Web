@@ -9,13 +9,10 @@ const supabase = createClient(
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    console.log("✅ Received FormData:", formData);
-
     const userId = formData.get("userId") as string;
     const file = formData.get("file") as File | null;
 
     if (!userId || !file) {
-      console.error("❌ Missing userId or file");
       return NextResponse.json(
         { error: "Missing userId or file" },
         { status: 400 },
