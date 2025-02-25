@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import styles from "./avatar.module.scss";
 
 const AvatarPage = () => {
-  const [iframeHeight, setIframeHeight] = useState("800px");
+  const [iframeHeight, setIframeHeight] = useState("75vh");
 
   useEffect(() => {
     const updateHeight = () => {
-      setIframeHeight(`${window.innerHeight * 0.8}px`); // 80% of viewport height
+      setIframeHeight(`${window.innerHeight * 0.75}px`);
     };
 
     window.addEventListener("resize", updateHeight);

@@ -3,6 +3,7 @@
     margin: 0 auto;
     text-align: center;
     padding: 20px;
+    min-height: 100vh;
   }
   
   .title {
@@ -20,8 +21,8 @@
   .iframeContainer {
     width: 100%;
     max-width: 800px;
-    min-height: 500px;
-    height: 80vh;
+    min-height: 450px;
+    height: 75vh;
     margin: 0 auto;
     border: 1px solid var(--border-in-light);
     border-radius: 10px;
@@ -36,6 +37,7 @@
   
   .buttonContainer {
     margin-top: 20px;
+    padding-bottom: 20px;
   }
   
   .nextButton {
