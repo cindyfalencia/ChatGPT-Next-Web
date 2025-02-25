@@ -44,11 +44,13 @@ const AvatarUpload = () => {
       });
 
       const result = await response.json();
-      if (!response.ok) {
-        alert(`Upload failed: ${result.error || "Unknown error"}`);
-      } else {
+      console.log("Upload result:", result);
+
+      if (result.success) {
         alert("Avatar uploaded successfully!");
-        router.push("/home"); // Redirect to home after success
+        router.push("/home"); // Redirect after success
+      } else {
+        alert(`Upload failed: ${result.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Upload error:", error);

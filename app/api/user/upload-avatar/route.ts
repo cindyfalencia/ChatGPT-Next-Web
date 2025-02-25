@@ -9,17 +9,20 @@ const supabase = createClient(
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
+    console.log("✅ Received FormData:", formData);
+
     const userId = formData.get("userId") as string;
     const file = formData.get("file") as File | null;
 
     if (!userId || !file) {
+      console.error("❌ Missing userId or file");
       return NextResponse.json(
         { error: "Missing userId or file" },
         { status: 400 },
       );
     }
 
-    console.log("✅ Uploading Avatar for User:", userId);
+    console.log(`✅ Uploading Avatar for User: ${userId}, File: ${file.name}`);
 
     // Upload Avatar to Supabase Storage
     const filePath = `avatars/${userId}.glb`;
@@ -43,6 +46,7 @@ export async function POST(req: NextRequest) {
       .from("avatars")
       .getPublicUrl(filePath);
     const avatarUrl = publicUrlData.publicUrl;
+    console.log("✅ Avatar Uploaded Successfully:", avatarUrl);
 
     // Update UserData row with the new avatar URL
     const { error: dbError } = await supabase
