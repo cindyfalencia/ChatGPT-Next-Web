@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import styles from "./avatar.module.scss";
+import styles from "../avatar.module.scss";
 
 const AvatarUpload = () => {
   const [file, setFile] = useState<File | null>(null);
