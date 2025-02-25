@@ -2,11 +2,25 @@ import React, { useRef, useEffect } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { getAvatarUrl } from "@/utils/getAvatar";
 
 export function Avatar3d(props) {
   const group = useRef();
   const { scene } = useThree();
-  const { nodes, materials, animations } = useGLTF("/fix.glb");
+  const [avatarUrl, setAvatarUrl] = useState(null);
+
+  // Fetch the dynamic avatar URL from Supabase
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      if (!userId) return;
+      const url = await getAvatarUrl(userId);
+      if (url) setAvatarUrl(url);
+    };
+
+    fetchAvatar();
+  }, [userId]);
+
+  const { nodes, materials, animations } = useGLTF(avatarUrl || "/fix.glb");
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {

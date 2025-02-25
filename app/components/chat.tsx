@@ -1587,6 +1587,15 @@ function _Chat() {
 
   const [showChatSidePanel, setShowChatSidePanel] = useState(false);
 
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, []);
+
   return (
     <>
       <div className={styles.chat} key={session.id}>
@@ -1684,7 +1693,7 @@ function _Chat() {
                     maxPolarAngle={Math.PI / 2}
                     target={[0, 1.6, 0]}
                   />
-                  <Avatar3d />
+                  {userId && <Avatar3d userId={userId} />}
                 </Canvas>
               </div>
               <div className={styles["chat-messages-wrapper"]}>
