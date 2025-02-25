@@ -1,13 +1,18 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { getAvatarUrl } from "../../../app/utils/get-avatar";
 
-export function Avatar3d(props) {
+export function Avatar3d({ userId, ...props }) {
   const group = useRef();
   const { scene } = useThree();
   const [avatarUrl, setAvatarUrl] = useState(null);
+
+  // Use default model first, update when avatar URL is loaded
+  const gltf = useGLTF(avatarUrl || "/fix.glb");
+  const { nodes, materials, animations } = gltf;
+  const { actions } = useAnimations(animations, group);
 
   // Fetch the dynamic avatar URL from Supabase
   useEffect(() => {
@@ -19,9 +24,6 @@ export function Avatar3d(props) {
 
     fetchAvatar();
   }, [userId]);
-
-  const { nodes, materials, animations } = useGLTF(avatarUrl || "/fix.glb");
-  const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
     if (actions) {
