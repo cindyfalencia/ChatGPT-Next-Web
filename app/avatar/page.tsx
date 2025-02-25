@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import styles from "./avatar.module.scss";
 
 const AvatarPage = () => {
@@ -16,11 +17,6 @@ const AvatarPage = () => {
 
     return () => window.removeEventListener("resize", updateHeight);
   }, []);
-
-  const handleNext = () => {
-    // Redirect to the home page after customization
-    window.location.href = "/home";
-  };
 
   return (
     <div className={styles.container}>
@@ -40,9 +36,9 @@ const AvatarPage = () => {
         ></iframe>
       </div>
       <div className={styles.buttonContainer}>
-        <button className={styles.nextButton} onClick={handleNext}>
-          Next
-        </button>
+        <Link href="/avatar/avatarUpload">
+          <button className={styles.nextButton}>Upload Avatar</button>
+        </Link>
       </div>
     </div>
   );

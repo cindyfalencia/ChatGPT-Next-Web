@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const questionnaire = formData.get("questionnaire") as string;
     const userId = formData.get("userId") as string;
-    const file = formData.get("file") as File | null;
 
     if (!questionnaire || !userId) {
       return NextResponse.json(
@@ -25,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     console.log("✅ Received Data:", { questionnaire, userId });
 
-    // Step 1: Process MBTI Analysis
+    // Process MBTI Analysis
     const analysis = fullAnalysis(questionnaire);
     let mbtiType: MBTIType =
       isValidMBTIType(analysis.type) && analysis.confidence >= 0.65
@@ -34,40 +33,13 @@ export async function POST(req: NextRequest) {
 
     console.log(`Final MBTI: ${mbtiType}, Confidence: ${analysis.confidence}`);
 
-    // Step 2: Handle Avatar Upload (if file exists)
-    let avatarUrl = null;
-    if (file) {
-      const filePath = `avatars/${userId}.glb`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file, {
-          contentType: "model/gltf-binary",
-          upsert: true,
-        });
-
-      if (uploadError) {
-        console.error("Avatar Upload Error:", uploadError);
-        return NextResponse.json(
-          { error: "Failed to upload avatar" },
-          { status: 500 },
-        );
-      }
-
-      // Get the public URL
-      avatarUrl = supabase.storage.from("avatars").getPublicUrl(filePath)
-        .data.publicUrl;
-    }
-
-    // Step 3: Store MBTI Result & Avatar URL in Database
-    console.log("🔥 Upserting UserData:");
     const { error: dbError } = await supabase
       .from("UserData")
       .upsert({
         id: userId,
         questionnaire,
         mbti: mbtiType,
-        avatar: avatarUrl,
+        avatar: null,
         analysis_metadata: JSON.stringify({
           confidence: analysis.confidence,
           breakdown: analysis.breakdown,
@@ -89,7 +61,6 @@ export async function POST(req: NextRequest) {
         success: true,
         mbti: mbtiType,
         confidence: analysis.confidence,
-        avatarUrl, // Return avatar URL if uploaded
         breakdown: analysis.breakdown,
         dictionaryMatch: mbtiDictionary[mbtiType] ?? null,
       },
