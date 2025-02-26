@@ -7,15 +7,15 @@ import { getAvatarUrl } from "../../../app/utils/get-avatar";
 export function Avatar3d({ userId, ...props }) {
   const group = useRef();
   const { scene } = useThree();
-  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState("/fix.glb"); // Default to fix.glb
+  const [useFallbackAnimation, setUseFallbackAnimation] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Always call useGLTF at the top level
-  const gltf = useGLTF(avatarUrl || "/fix.glb");
+  const gltf = useGLTF(avatarUrl);
   const { nodes, materials, animations } = gltf;
-  const { actions } = useAnimations(animations, group); // ✅ Always call at the top level
+  const { actions } = useAnimations(animations, group);
 
-  // ✅ Fetch avatar URL from Supabase
+  // Fetch avatar URL from Supabase
   useEffect(() => {
     const fetchAvatar = async () => {
       if (!userId) return;
@@ -23,19 +23,35 @@ export function Avatar3d({ userId, ...props }) {
       if (url) {
         console.log("✅ Loaded avatar URL:", url);
         setAvatarUrl(url);
-      } else {
-        console.warn("⚠️ No avatar found, using fallback model.");
       }
-      setLoading(false); // ✅ Mark loading as complete
+      setLoading(false);
     };
 
     fetchAvatar();
   }, [userId]);
 
-  // ✅ Ensure the animation runs
+  console.log("🔄 useGLTF Loaded Model:", gltf);
+  console.log("🛠 Nodes:", gltf.nodes);
+  console.log("🛠 Materials:", gltf.materials);
+  console.log("🎭 Animations:", gltf.animations);
+
   useEffect(() => {
+    if (!animations || animations.length === 0) {
+      console.warn("No animations found, switching to fallback animations.");
+      setUseFallbackAnimation(true);
+    } else {
+      setUseFallbackAnimation(false);
+    }
+  }, [animations]);
+
+  // Ensure the animation runs
+  useEffect(() => {
+    console.log("Available Actions:", actions);
     if (actions?.Waving) {
+      console.log("Playing Waving Animation");
       actions.Waving.play();
+    } else {
+      console.warn("No Waving animation found!");
     }
   }, [actions]);
 
@@ -80,45 +96,9 @@ export function Avatar3d({ userId, ...props }) {
         <group name="Avatar">
           <skinnedMesh
             name="avaturn_body"
-            geometry={nodes.avaturn_body.geometry}
+            geometry={nodes.avaturn_body?.geometry}
             material={materials.avaturn_body_material}
-            skeleton={nodes.avaturn_body.skeleton}
-          />
-          <skinnedMesh
-            name="avaturn_glasses_0"
-            geometry={nodes.avaturn_glasses_0.geometry}
-            material={materials.avaturn_glasses_0_material}
-            skeleton={nodes.avaturn_glasses_0.skeleton}
-          />
-          <skinnedMesh
-            name="avaturn_glasses_1"
-            geometry={nodes.avaturn_glasses_1.geometry}
-            material={materials.avaturn_glasses_1_material}
-            skeleton={nodes.avaturn_glasses_1.skeleton}
-          />
-          <skinnedMesh
-            name="avaturn_hair_0"
-            geometry={nodes.avaturn_hair_0.geometry}
-            material={materials.avaturn_hair_0_material}
-            skeleton={nodes.avaturn_hair_0.skeleton}
-          />
-          <skinnedMesh
-            name="avaturn_hair_1"
-            geometry={nodes.avaturn_hair_1.geometry}
-            material={materials.avaturn_hair_1_material}
-            skeleton={nodes.avaturn_hair_1.skeleton}
-          />
-          <skinnedMesh
-            name="avaturn_look_0"
-            geometry={nodes.avaturn_look_0.geometry}
-            material={materials.avaturn_look_0_material}
-            skeleton={nodes.avaturn_look_0.skeleton}
-          />
-          <skinnedMesh
-            name="avaturn_shoes_0"
-            geometry={nodes.avaturn_shoes_0.geometry}
-            material={materials.avaturn_shoes_0_material}
-            skeleton={nodes.avaturn_shoes_0.skeleton}
+            skeleton={nodes.avaturn_body?.skeleton}
           />
           <primitive object={nodes.Hips} />
         </group>
