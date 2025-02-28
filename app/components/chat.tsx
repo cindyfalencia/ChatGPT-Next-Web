@@ -1955,11 +1955,6 @@ function _Chat() {
               </div>
             </div>
             <div className={styles["chat-input-panel"]}>
-              <PromptHints
-                prompts={promptHints}
-                onPromptSelect={onPromptSelect}
-              />
-
               <ChatActions
                 uploadImage={uploadImage}
                 setAttachImages={setAttachImages}
