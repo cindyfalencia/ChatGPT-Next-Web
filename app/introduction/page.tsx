@@ -67,7 +67,7 @@ const IntroductionPage = () => {
           );
           return;
         }
-
+        localStorage.setItem("mbti", mbti);
         router.push(`/result?mbti=${mbti}`);
       } else {
         alert(`Upload failed: ${result.error || "Unknown error"}`);

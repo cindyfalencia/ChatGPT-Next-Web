@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
-import { fullAnalysis } from "@/app/api/mbti/analysis/route";
+import { fullAnalysis } from "@/app/utils/api";
 import { mbtiDictionary, MBTIType } from "@/app/api/mbti/dictionary";
 
 // Initialize Supabase
