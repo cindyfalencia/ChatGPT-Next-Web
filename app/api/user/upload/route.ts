@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
-import { fullAnalysis } from "@/app/api/mbti/analysis";
+import { fullAnalysis } from "@/app/api/mbti/analysis/route";
 import { mbtiDictionary, MBTIType } from "@/app/api/mbti/dictionary";
 
 // Initialize Supabase
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     console.log("✅ Received Data:", { questionnaire, userId });
 
     // Process MBTI Analysis
-    const analysis = fullAnalysis(questionnaire);
+    const analysis = await fullAnalysis(questionnaire);
     let mbtiType: MBTIType =
       isValidMBTIType(analysis.type) && analysis.confidence >= 0.65
         ? analysis.type
