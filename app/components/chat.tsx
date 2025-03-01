@@ -1036,6 +1036,7 @@ function _Chat() {
 
   const doSubmit = (userInput: string) => {
     if (userInput.trim() === "" && isEmpty(attachImages)) return;
+
     const matchCommand = chatCommands.match(userInput);
     if (matchCommand.matched) {
       setUserInput("");
@@ -1043,20 +1044,69 @@ function _Chat() {
       matchCommand.invoke();
       return;
     }
-    setIsLoading(true);
-    const userMBTI = localStorage.getItem("mbti") || "UNKNOWN";
-    const formattedInput = userMBTI ? `(${userMBTI}) ${userInput}` : userInput;
 
+    setIsLoading(true);
+
+    const userMBTI = localStorage.getItem("mbti") || "UNKNOWN";
+
+    // Handle Slash Commands ("/")
+    if (userInput.startsWith("/")) {
+      const command = userInput.slice(1).trim(); // Remove "/"
+      let systemPrompt = "";
+
+      switch (command) {
+        case "mbti":
+          systemPrompt = `Act as an MBTI-based chatbot. Your personality type is ${userMBTI}. Respond accordingly.`;
+          break;
+
+        case "fun":
+          systemPrompt = `Tell me a joke based on an ${userMBTI} personality.`;
+          break;
+
+        case "advice":
+          systemPrompt = `Give me life advice based on an ${userMBTI} personality.`;
+          break;
+
+        case "career":
+          systemPrompt = `What career path is best suited for an ${userMBTI} personality type?`;
+          break;
+
+        case "love":
+          systemPrompt = `Give me relationship advice based on an ${userMBTI} personality type.`;
+          break;
+
+        case "reset":
+          localStorage.removeItem("mbti");
+          chatStore.onUserInput(
+            "MBTI has been reset. Please take the test again.",
+          );
+          setUserInput("");
+          return;
+
+        default:
+          chatStore.onUserInput(
+            `Unknown command: ${command}. Try /mbti, /fun, /advice, /career, /love, or /reset.`,
+          );
+          setUserInput("");
+          return;
+      }
+
+      // Send the system message to chatbot
+      chatStore.onUserInput(systemPrompt);
+      setUserInput(""); // Clear input field
+      return;
+    }
+
+    // Default Chat Behavior (Inject MBTI)
     chatStore
-      .onUserInput(formattedInput, attachImages)
+      .onUserInput(`(${userMBTI}) ${userInput}`, attachImages)
       .then(() => setIsLoading(false));
-    // chatStore
-    //   .onUserInput(userInput, attachImages)
-    //   .then(() => setIsLoading(false));
+
     setAttachImages([]);
     chatStore.setLastInput(`(${userMBTI}) ${userInput}`);
     setUserInput("");
     setPromptHints([]);
+
     if (!isMobileScreen) inputRef.current?.focus();
     setAutoScroll(true);
   };
