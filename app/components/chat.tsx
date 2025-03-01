@@ -31,7 +31,7 @@ import ConfirmIcon from "../icons/confirm.svg";
 import CloseIcon from "../icons/close.svg";
 import CancelIcon from "../icons/cancel.svg";
 import ImageIcon from "../icons/image.svg";
-
+import PromptIcon from "../icons/prompt.svg";
 import LightIcon from "../icons/light.svg";
 import DarkIcon from "../icons/dark.svg";
 import AutoIcon from "../icons/auto.svg";
@@ -598,7 +598,11 @@ export function ChatActions(props: {
             </>
           }
         />
-
+        <ChatAction
+          onClick={props.showPromptHints}
+          text={Locale.Chat.InputActions.Prompt}
+          icon={<PromptIcon />}
+        />
         <ChatAction
           text={Locale.Chat.InputActions.Clear}
           icon={<BreakIcon />}
