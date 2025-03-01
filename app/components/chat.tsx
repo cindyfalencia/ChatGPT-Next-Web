@@ -961,7 +961,17 @@ function _Chat() {
   const [promptHints, setPromptHints] = useState<RenderPrompt[]>([]);
   const onSearch = useDebouncedCallback(
     (text: string) => {
-      const matchedPrompts = promptStore.search(text);
+      const userMBTI = localStorage.getItem("mbti") || "UNKNOWN"; // Get MBTI type
+
+      // Fetch all prompts and filter by MBTI
+      const matchedPrompts = promptStore
+        .search(text)
+        .filter(
+          (prompt) =>
+            prompt.title.includes(userMBTI) ||
+            prompt.content.includes(userMBTI),
+        );
+
       setPromptHints(matchedPrompts);
     },
     100,
@@ -1034,11 +1044,17 @@ function _Chat() {
       return;
     }
     setIsLoading(true);
+    const userMBTI = localStorage.getItem("mbti") || "UNKNOWN";
+    const formattedInput = userMBTI ? `(${userMBTI}) ${userInput}` : userInput;
+
     chatStore
-      .onUserInput(userInput, attachImages)
+      .onUserInput(formattedInput, attachImages)
       .then(() => setIsLoading(false));
+    // chatStore
+    //   .onUserInput(userInput, attachImages)
+    //   .then(() => setIsLoading(false));
     setAttachImages([]);
-    chatStore.setLastInput(userInput);
+    chatStore.setLastInput(`(${userMBTI}) ${userInput}`);
     setUserInput("");
     setPromptHints([]);
     if (!isMobileScreen) inputRef.current?.focus();
@@ -1048,7 +1064,7 @@ function _Chat() {
   const onPromptSelect = (prompt: RenderPrompt) => {
     setTimeout(() => {
       setPromptHints([]);
-
+      const userMBTI = localStorage.getItem("mbti") || "UNKNOWN"; // Get MBTI type
       const matchedChatCommand = chatCommands.match(prompt.content);
       if (matchedChatCommand.matched) {
         // if user is selecting a chat command, just trigger it
@@ -1056,7 +1072,7 @@ function _Chat() {
         setUserInput("");
       } else {
         // or fill the prompt
-        setUserInput(prompt.content);
+        setUserInput(`(${userMBTI}) ${prompt.content}`);
       }
       inputRef.current?.focus();
     }, 30);
@@ -1950,6 +1966,10 @@ function _Chat() {
               </div>
             </div>
             <div className={styles["chat-input-panel"]}>
+              <PromptHints
+                prompts={promptHints}
+                onPromptSelect={onPromptSelect}
+              />
               <ChatActions
                 uploadImage={uploadImage}
                 setAttachImages={setAttachImages}

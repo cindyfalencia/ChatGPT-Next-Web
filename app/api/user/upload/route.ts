@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     // Process MBTI Analysis
     const analysis = await fullAnalysis(questionnaire);
     let mbtiType: MBTIType =
-      isValidMBTIType(analysis.type) && analysis.confidence >= 0.65
+      isValidMBTIType(analysis.type) && analysis.confidence >= 0.6
         ? analysis.type
         : analysis.bestMatch;
 
@@ -77,6 +77,7 @@ export async function POST(req: NextRequest) {
 }
 
 // Helper function to validate MBTI type
-function isValidMBTIType(type: string): type is MBTIType {
+function isValidMBTIType(type: string | null | undefined): type is MBTIType {
+  if (!type) return false;
   return Object.keys(mbtiDictionary).includes(type);
 }

@@ -103,8 +103,35 @@ export function MaskConfig(props: {
 
   return (
     <>
-      <ContextPrompts
+      {/* <ContextPrompts
         context={props.mask.context}
+        updateContext={(updater) => {
+          const context = props.mask.context.slice();
+          updater(context);
+          props.updateMask((mask) => (mask.context = context));
+        }}
+      /> */}
+      <ContextPrompts
+        context={[
+          ...props.mask.context,
+          {
+            id: `mbti-prompt-${Date.now()}`, // Ensure unique ID
+            date: new Date().toISOString(), // Provide a date
+            role: "assistant",
+            content: `Act as an MBTI-based chatbot. Your personality type is ${
+              localStorage.getItem("mbti") || "UNKNOWN"
+            }. Respond to the user accordingly while maintaining a natural conversation. ${
+              localStorage.getItem("mbti") === "INFJ"
+                ? "You are insightful and deep."
+                : localStorage.getItem("mbti") === "ESTP"
+                ? "You are spontaneous and energetic."
+                : ""
+            }`,
+            streaming: false,
+            isError: false,
+            model: "gpt-4o-mini",
+          },
+        ]}
         updateContext={(updater) => {
           const context = props.mask.context.slice();
           updater(context);
