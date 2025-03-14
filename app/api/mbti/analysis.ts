@@ -228,7 +228,7 @@ export const fullAnalysis = (questionnaire: string): AnalysisResult => {
       (features.structuredTerms - features.flexibleTerms) * 0.6,
   };
 
-  console.log("🔍 Raw Dimension Scores:", rawScores);
+  console.log("Raw Dimension Scores:", rawScores);
 
   // Convert scores into the expected breakdown format
   const dimensionScores: Record<
@@ -270,7 +270,7 @@ export const fullAnalysis = (questionnaire: string): AnalysisResult => {
 
   const confidence = calculateConfidence(rawScores, type);
 
-  console.log(`⚡ Calculated MBTI: ${type}, Confidence: ${confidence}`);
+  console.log(`Calculated MBTI: ${type}, Confidence: ${confidence}`);
 
   if (!isValidMBTIType(type) || confidence < CONFIDENCE_THRESHOLD) {
     const bestMatch = Object.keys(mbtiDictionary).reduce(
@@ -294,7 +294,7 @@ export const fullAnalysis = (questionnaire: string): AnalysisResult => {
       { type: "UNKNOWN", score: Infinity },
     ).type;
 
-    console.log(`🔍 Best alternative MBTI: ${bestMatch}`);
+    console.log(`Best alternative MBTI: ${bestMatch}`);
 
     return {
       type: bestMatch as MBTIType,
