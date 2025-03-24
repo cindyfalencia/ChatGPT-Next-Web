@@ -43,54 +43,60 @@ function Result() {
     <div className={styles.container}>
       {result.type === "UNKNOWN" ? (
         <>
-          <h1 className={styles.title} data-type={result.type}>
-            {result.type === "UNKNOWN"
-              ? "Unable to Determine Personality Type"
-              : `Your Personality Type: ${result.type}`}
-          </h1>
-          <p className={styles.description}>
-            We couldn&apos;t confidently determine your MBTI type...
-          </p>
-          <div className={styles.breakdown}>
-            <h3>Analysis Details:</h3>
-            <pre className={styles.breakdownData}>
-              {JSON.stringify(result.breakdown, null, 2)}
-            </pre>
-          </div>
-          <div className={styles.buttonGroup}>
-            <button className={styles.retryButton} onClick={handleRetry}>
-              Try Again with More Details
-            </button>
+          <div className={styles.content}>
+            <h1 className={styles.title} data-type={result.type}>
+              {result.type === "UNKNOWN"
+                ? "Unable to Determine Personality Type"
+                : `Your Personality Type: ${result.type}`}
+            </h1>
+            <p className={styles.description}>
+              We couldn&apos;t confidently determine your MBTI type...
+            </p>
+            <div className={styles.breakdown}>
+              <h3>Analysis Details:</h3>
+              <pre className={styles.breakdownData}>
+                {JSON.stringify(result.breakdown, null, 2)}
+              </pre>
+            </div>
+            <div className={styles.buttonGroup}>
+              <button className={styles.retryButton} onClick={handleRetry}>
+                Try Again with More Details
+              </button>
+            </div>
           </div>
         </>
       ) : (
         <>
-          <h1 className={styles.title}>Your Personality Type: {result.type}</h1>
-          <p
-            className={styles.confidence}
-            data-confidence={result.confidence < 0.5 ? "low" : "high"}
-          >
-            Confidence Level: {(result.confidence * 100).toFixed(1)}%
-          </p>
-          {result.dictionaryMatch && (
-            <div className={styles.description}>
-              <h3>About {result.type}s:</h3>
-              <p>{result.dictionaryMatch.description}</p>
+          <div className={styles.content}>
+            <h1 className={styles.title}>
+              Your Personality Type: {result.type}
+            </h1>
+            <p
+              className={styles.confidence}
+              data-confidence={result.confidence < 0.5 ? "low" : "high"}
+            >
+              Confidence Level: {(result.confidence * 100).toFixed(1)}%
+            </p>
+            {result.dictionaryMatch && (
+              <div className={styles.description}>
+                <h3>About {result.type}s:</h3>
+                <p>{result.dictionaryMatch.description}</p>
+              </div>
+            )}
+            <div className={styles.breakdown}>
+              <h3>Analysis Breakdown:</h3>
+              <pre className={styles.breakdownData}>
+                {JSON.stringify(result.breakdown, null, 2)}
+              </pre>
             </div>
-          )}
-          <div className={styles.breakdown}>
-            <h3>Analysis Breakdown:</h3>
-            <pre className={styles.breakdownData}>
-              {JSON.stringify(result.breakdown, null, 2)}
-            </pre>
-          </div>
-          <div className={styles.buttonGroup}>
-            <button className={styles.retryButton} onClick={handleRetry}>
-              Try Again
-            </button>
-            <button className={styles.proceedButton} onClick={handleProceed}>
-              Proceed to Avatar Customization
-            </button>
+            <div className={styles.buttonGroup}>
+              <button className={styles.retryButton} onClick={handleRetry}>
+                Try Again
+              </button>
+              <button className={styles.proceedButton} onClick={handleProceed}>
+                Proceed to Avatar Customization
+              </button>
+            </div>
           </div>
         </>
       )}
