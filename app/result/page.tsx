@@ -66,9 +66,9 @@ function Result() {
           <h1 className={styles.title}>Your Personality Type: {result.type}</h1>
           <p
             className={styles.confidence}
-            data-confidence={confidence < 0.5 ? "low" : "high"}
+            data-confidence={result.confidence < 0.5 ? "low" : "high"}
           >
-            Confidence Level: {(confidence * 100).toFixed(1)}%
+            Confidence Level: {(result.confidence * 100).toFixed(1)}%
           </p>
           {result.dictionaryMatch && (
             <div className={styles.description}>
