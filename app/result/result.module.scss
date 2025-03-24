@@ -40,8 +40,8 @@
 .description {
   font-size: 1.2rem;
   line-height: 1.6;
-  margin-bottom: 2rem;
-  color: #333;
+  margin-bottom: 1rem;
+  color: var(--black);
 }
 
 /* Breakdown panel - shows analysis details */
@@ -73,8 +73,8 @@
 
 /* Button styles */
 .proceedButton {
-  padding: 0.75rem 1.5rem;
-  background-color: #0070f3;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary);
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -97,10 +97,10 @@
 /* Special style for retry button */
 .retryButton {
   @extend .proceedButton;
-  background-color: #f44336;
+  background-color: var(--primary);
   
   &:hover {
-    background-color: #d32f2f;
+    background-color: #005bb5;
   }
 }
 

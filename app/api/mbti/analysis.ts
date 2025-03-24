@@ -20,7 +20,7 @@ export type AnalysisResult = {
 };
 
 // Configuration
-const CONFIDENCE_THRESHOLD = 0.5;
+const CONFIDENCE_THRESHOLD = 0.3;
 
 // --- Text Preprocessing ---
 const preprocessText = (text: string): string[] => {
