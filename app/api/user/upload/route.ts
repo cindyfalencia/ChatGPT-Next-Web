@@ -23,30 +23,37 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("✅ Received Data:", { questionnaire, userId });
+    console.log("Received Data:", { questionnaire, userId });
 
     // Process MBTI Analysis
     const analysis = await fullAnalysis(questionnaire);
-    let mbtiType: MBTIType =
-      isValidMBTIType(analysis.type) && analysis.confidence >= 0.6
-        ? analysis.type
-        : analysis.bestMatch;
 
-    console.log(`Final MBTI: ${mbtiType}, Confidence: ${analysis.confidence}`);
+    // Determine the result type (strict UNKNOWN when confidence is low)
+    const resultType =
+      analysis.confidence >= 0.5 && isValidMBTIType(analysis.type)
+        ? analysis.type
+        : "UNKNOWN";
+
+    console.log(
+      `Analysis Result: ${resultType}, Confidence: ${analysis.confidence}`,
+    );
+
+    // Prepare data for Supabase
+    const userData = {
+      id: userId,
+      questionnaire,
+      mbti: resultType === "UNKNOWN" ? null : resultType, // Store NULL in DB for UNKNOWN
+      avatar: null,
+      analysis_metadata: JSON.stringify({
+        confidence: analysis.confidence,
+        breakdown: analysis.breakdown,
+        timestamp: new Date().toISOString(),
+      }),
+    };
 
     const { error: dbError } = await supabase
       .from("UserData")
-      .upsert({
-        id: userId,
-        questionnaire,
-        mbti: mbtiType,
-        avatar: null,
-        analysis_metadata: JSON.stringify({
-          confidence: analysis.confidence,
-          breakdown: analysis.breakdown,
-          timestamp: new Date().toISOString(),
-        }),
-      })
+      .upsert(userData)
       .select("*");
 
     if (dbError) {
@@ -60,10 +67,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        mbti: mbtiType,
+        type: resultType, // Always return the determined type (might be UNKNOWN)
         confidence: analysis.confidence,
         breakdown: analysis.breakdown,
-        dictionaryMatch: mbtiDictionary[mbtiType] ?? null,
+        dictionaryMatch:
+          resultType !== "UNKNOWN" ? mbtiDictionary[resultType] : null,
       },
       { status: 200 },
     );

@@ -11,7 +11,6 @@ const IntroductionPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Prevent redirection if already on "/auth"
     if (window.location.hash === "#/auth") return;
 
     let storedUserId = localStorage.getItem("userId");
@@ -59,22 +58,23 @@ const IntroductionPage = () => {
       console.log("API response:", result);
 
       if (response.ok) {
-        const { mbti } = result;
+        localStorage.setItem(
+          "mbtiResult",
+          JSON.stringify({
+            type: result.type,
+            confidence: result.confidence,
+            breakdown: result.breakdown,
+            dictionaryMatch: result.dictionaryMatch,
+          }),
+        );
 
-        if (!mbti || mbti === "UNKNOWN") {
-          alert(
-            "Could not determine your MBTI with confidence. Try again with more details.",
-          );
-          return;
-        }
-        localStorage.setItem("mbti", mbti);
-        router.push(`/result?mbti=${mbti}`);
+        router.push(`/result?type=${result.type}`);
       } else {
-        alert(`Upload failed: ${result.error || "Unknown error"}`);
+        throw new Error(result.error || "Upload failed");
       }
     } catch (error) {
-      console.error("Error during upload:", error);
-      alert("An error occurred during the upload. Please try again.");
+      console.error("Error:", error);
+      alert("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -102,7 +102,7 @@ const IntroductionPage = () => {
           className={styles.submitButton}
           disabled={isLoading}
         >
-          {isLoading ? "Uploading..." : "Submit and Proceed"}
+          {isLoading ? "Analyzing..." : "Get My Results"}
         </button>
       </form>
     </div>

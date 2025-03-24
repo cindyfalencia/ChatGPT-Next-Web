@@ -1,19 +1,39 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import styles from "./result.module.scss";
-import { mbtiDictionary } from "@/app/api/mbti/dictionary";
 import { useRouter } from "next/navigation";
+
+type ResultData = {
+  type: string;
+  confidence: number;
+  breakdown: any;
+  dictionaryMatch: any;
+};
 
 function Result() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const mbti = searchParams.get("mbti");
+  const [result, setResult] = useState<ResultData | null>(null);
 
-  if (!mbti || mbti === "UNKNOWN") {
-    return <h1>MBTI could not be determined. Please try again.</h1>;
+  useEffect(() => {
+    const storedResult = localStorage.getItem("mbtiResult");
+    if (storedResult) {
+      setResult(JSON.parse(storedResult));
+    }
+  }, []);
+
+  const type = searchParams.get("type");
+  const confidence = parseFloat(searchParams.get("confidence") || "0");
+
+  if (!result) {
+    return <div className={styles.container}>Loading results...</div>;
   }
+
+  const handleRetry = () => {
+    router.push("/");
+  };
 
   const handleProceed = () => {
     router.push("/avatar");
@@ -21,14 +41,52 @@ function Result() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Your MBTI Result: {mbti}</h1>
-      <p className={styles.description}>
-        {mbtiDictionary[mbti].description ||
-          "We couldn't determine your MBTI type."}
-      </p>
-      <button className={styles.proceedButton} onClick={handleProceed}>
-        Proceed to Avatar Customization
-      </button>
+      {result.type === "UNKNOWN" ? (
+        <>
+          <h1 className={styles.title} data-type={result.type}>
+            {result.type === "UNKNOWN"
+              ? "Unable to Determine Personality Type"
+              : `Your Personality Type: ${result.type}`}
+          </h1>
+          <p className={styles.description}>
+            We couldn&apos;t confidently determine your MBTI type...
+          </p>
+          <div className={styles.breakdown}>
+            <h3>Analysis Details:</h3>
+            <pre className={styles.breakdownData}>
+              {JSON.stringify(result.breakdown, null, 2)}
+            </pre>
+          </div>
+          <button className={styles.retryButton} onClick={handleRetry}>
+            Try Again with More Details
+          </button>
+        </>
+      ) : (
+        <>
+          <h1 className={styles.title}>Your Personality Type: {result.type}</h1>
+          <p
+            className={styles.confidence}
+            data-confidence={confidence < 0.5 ? "low" : "high"}
+          >
+            Confidence Level: {(confidence * 100).toFixed(1)}%
+          </p>
+          {result.dictionaryMatch && (
+            <div className={styles.description}>
+              <h3>About {result.type}s:</h3>
+              <p>{result.dictionaryMatch.description}</p>
+            </div>
+          )}
+          <div className={styles.breakdown}>
+            <h3>Analysis Breakdown:</h3>
+            <pre className={styles.breakdownData}>
+              {JSON.stringify(result.breakdown, null, 2)}
+            </pre>
+          </div>
+          <button className={styles.proceedButton} onClick={handleProceed}>
+            Proceed to Avatar Customization
+          </button>
+        </>
+      )}
     </div>
   );
 }
