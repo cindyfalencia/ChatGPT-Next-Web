@@ -297,7 +297,7 @@ export const fullAnalysis = (questionnaire: string): AnalysisResult => {
     console.log(`Best alternative MBTI: ${bestMatch}`);
 
     return {
-      type: bestMatch as MBTIType,
+      type: "UNKNOWN",
       confidence,
       breakdown: dimensionScores,
       bestMatch: bestMatch as MBTIType,
