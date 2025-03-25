@@ -10,11 +10,12 @@
 }
 
 .content {
-  max-height: calc(100vh - 150px);
+  max-height: calc(100vh - 80px);
   flex: 1;
   width:100%;
   max-width: 800px;
   padding: 1rem;
+  padding-bottom: 6rem;
 }
 
 /* Shared heading styles */
@@ -78,8 +79,8 @@
 }
 
 .breakdownData {
+  max-height: 300px;
   background: white;
-  max-height: 60vh; 
   padding: 1rem;
   border-radius: 0.25rem;
   font-family: 'Courier New', monospace;
@@ -94,12 +95,9 @@
 .button-container {
   display: flex;
   justify-content: center;
-  gap: 2rem;
+  gap: 1rem;
   padding: 1rem 0;
   margin-top: 1rem;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
   backdrop-filter: blur(5px);
 }
 
