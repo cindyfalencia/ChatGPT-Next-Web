@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: flex-start; 
   min-height: 100vh;
-  padding: 1rem;
+  padding: 0.5rem;
   margin: 0 auto;
   text-align: center;
 }
@@ -12,14 +12,14 @@
 .content {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 140px; 
+  padding-bottom: 50px; 
 }
 
 /* Shared heading styles */
 .title {
   font-size: 2rem;
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   color: var(--black);
   
   /* Special style for UNKNOWN case */
@@ -31,7 +31,7 @@
 /* Confidence indicator */
 .confidence {
   font-size: 1.1rem;
-  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
   padding: 0.5rem 1rem;
   border-radius: 2rem;
   background: #f0f0f0;
@@ -51,7 +51,6 @@
 .description {
   font-size: 1.2rem;
   line-height: 1.6;
-  margin-bottom: 1rem;
   color: var(--black);
 }
 
@@ -100,7 +99,6 @@
 
 .button {
   padding: 1rem 1.5rem;
-  color: white;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
