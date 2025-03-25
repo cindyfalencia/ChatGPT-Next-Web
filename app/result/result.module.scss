@@ -15,7 +15,7 @@
   width:100%;
   max-width: 800px;
   padding: 1rem;
-  padding-bottom: 1rem;
+  padding-bottom: 2rem;
 }
 
 /* Shared heading styles */
@@ -98,13 +98,12 @@
   gap: 2rem;
   padding: 1rem 0;
   margin-top: 1rem;
-  bottom: 0;
+  bottom: 2rem;
   backdrop-filter: blur(5px);
-  padding-bottom: 2rem;
 }
 
 .button {
-  padding: 15rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -135,7 +134,7 @@
 }
 
 .retryButton {
-  padding-right: 1rem;
+  padding-right: 0.5rem;
   @extend .button;
   background-color: #2196f3;
   
