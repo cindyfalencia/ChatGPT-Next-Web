@@ -10,6 +10,7 @@
 }
 
 .content {
+  max-height: 90vh;
   flex: 1;
   width:100%;
   max-width: 800px;
@@ -64,8 +65,6 @@
   padding: 1rem;
   margin: 1rem 0;
   text-align: left;
-  max-height: 50vh; 
-  overflow-y: auto;
   
   h3 {
     margin: 0 0 0.75rem 0;
@@ -80,11 +79,13 @@
 
 .breakdownData {
   background: white;
+  max-height: 60vh; 
   padding: 1rem;
   border-radius: 0.25rem;
   font-family: 'Courier New', monospace;
   font-size: 0.9rem;
   overflow-x: auto; 
+  overflow-y: auto;
   white-space: pre-wrap;
   word-break: break-word;
   border: 1px solid #e0e0e0;
@@ -92,8 +93,9 @@
 
 .button-container {
   display: flex;
+  min-height: 10vh;
   justify-content: center;
-  gap: 1rem;
+  gap: 2rem;
   padding: 1rem 0;
   margin-top: 1rem;
   position: sticky;
