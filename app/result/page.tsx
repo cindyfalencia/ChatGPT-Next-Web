@@ -57,11 +57,12 @@ function Result() {
               <pre className={styles.breakdownData}>
                 {JSON.stringify(result.breakdown, null, 2)}
               </pre>
-
-              <button className={styles.retryButton} onClick={handleRetry}>
-                Try Again with More Details
-              </button>
             </div>
+          </div>
+          <div className={styles.buttonContainer}>
+            <button className={styles.retryButton} onClick={handleRetry}>
+              Try Again with More Details
+            </button>
           </div>
         </>
       ) : (
@@ -87,13 +88,15 @@ function Result() {
               <pre className={styles.breakdownData}>
                 {JSON.stringify(result.breakdown, null, 2)}
               </pre>
-              <button className={styles.retryButton} onClick={handleRetry}>
-                Try Again
-              </button>
-              <button className={styles.proceedButton} onClick={handleProceed}>
-                Proceed to Avatar Customization
-              </button>
             </div>
+          </div>
+          <div className={styles.buttonContainer}>
+            <button className={styles.retryButton} onClick={handleRetry}>
+              Try Again
+            </button>
+            <button className={styles.proceedButton} onClick={handleProceed}>
+              Proceed to Avatar Customization
+            </button>
           </div>
         </>
       )}
