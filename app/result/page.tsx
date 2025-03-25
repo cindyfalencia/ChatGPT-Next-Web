@@ -57,8 +57,7 @@ function Result() {
               <pre className={styles.breakdownData}>
                 {JSON.stringify(result.breakdown, null, 2)}
               </pre>
-            </div>
-            <div className={styles.buttonGroup}>
+
               <button className={styles.retryButton} onClick={handleRetry}>
                 Try Again with More Details
               </button>
@@ -88,8 +87,6 @@ function Result() {
               <pre className={styles.breakdownData}>
                 {JSON.stringify(result.breakdown, null, 2)}
               </pre>
-            </div>
-            <div className={styles.buttonGroup}>
               <button className={styles.retryButton} onClick={handleRetry}>
                 Try Again
               </button>
