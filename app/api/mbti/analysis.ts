@@ -63,9 +63,11 @@ const extractFeatures = (text: string) => {
     ]),
     concreteTerms: countOccurrences(tokens, [
       "fact",
+      "factual",
       "practical",
       "now",
       "detail",
+      "details",
       "realistic",
       "hands-on",
     ]),
@@ -86,9 +88,13 @@ const extractFeatures = (text: string) => {
     structuredTerms: countOccurrences(tokens, [
       "plan",
       "organize",
+      "organization",
       "deadline",
       "schedule",
       "goal",
+      "proven",
+      "method",
+      "methods",
     ]),
     flexibleTerms: countOccurrences(tokens, [
       "flexible",
