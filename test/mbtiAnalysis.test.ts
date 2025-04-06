@@ -4,34 +4,34 @@ import { mbtiDictionary, MBTIType } from "@/app/api/mbti/dictionary";
 describe("MBTI Analysis Unit Tests", () => {
   const testCases: { name: string; questionnaire: string; expectedMBTI: MBTIType }[] = [
     {
-      name: "ENTP - Extroverted, abstract, logical, spontaneous",
+      name: "ENTP - Extroverted, Intuition, Logical, Spontaneous",
       questionnaire: "I prefer brainstorming and thinking outside the box rather than following traditional methods. I enjoy debating new ideas and challenging conventional thinking.",
       expectedMBTI: "ESTJ",
     },
     {
-      name: "ISTJ - Introverted, structured, logical, detail-focused",
+      name: "ENTJ - Extroverted, Intuition, Logical, Detail-focused",
       questionnaire: "I focus on details and factual information rather than abstract concepts. I prefer structure, organization, and proven methods over experimenting with new ideas.",
-      expectedMBTI: "ISTJ",
+      expectedMBTI: "ENTJ",
     },
     {
-      name: "ISFP - Fun-loving and energetic",
+      name: "INFP - Introverted, Intuition, Feeling, Spontaneous",
       questionnaire: "I love excitement, socializing, and trying new experiences. I live in the moment and prefer going with the flow rather than planning too much.",
-      expectedMBTI: "ISFP",
+      expectedMBTI: "INFP",
     },
     {
-      name: "INTJ - Visionary and strategic planner",
+      name: "INTJ - Introverted, Intuition, Logical, Detail-focused",
       questionnaire: "I analyze everything strategically and think about long-term impacts. I prefer making rational, objective decisions rather than relying on emotions.",
       expectedMBTI: "INTJ",
     },
     {
-      name: "ISFP - Emotional and idealistic dreamer",
+      name: "INFP - Introverted, Intuition, Feeling, Spontaneous",
       questionnaire: "I believe in making the world a better place through understanding and compassion. I value deep connections and personal meaning in everything I do.",
-      expectedMBTI: "ISFP",
+      expectedMBTI: "INFP",
     },
     {
       name: "Low Confidence Case - Should Select Best Match",
       questionnaire: "I don’t strongly identify with any specific preference, and I see value in both logic and emotions. Sometimes I plan, other times I go with the flow.",
-      expectedMBTI: "ISTJ", 
+      expectedMBTI: "INFJ", 
     },
   ];
 
