@@ -142,15 +142,19 @@ const calculateConfidence = (
   type: MBTIType,
 ): number => {
   const expectedScores = mbtiDictionary[type].analysisCriteria;
-  let totalDeviation = 0;
-  const maxDeviation = 4;
+  let totalSimilarity = 0;
+  let dimensionCount = 0;
 
-  Object.entries(dimensionScores).forEach(([dimension, score]) => {
+  for (const [dimension, score] of Object.entries(dimensionScores)) {
     const expected =
       expectedScores[dimension as DimensionPair]?.expectedScore || 0;
-    totalDeviation += Math.abs(score - expected);
-  });
-  return Math.max(0, 1 - totalDeviation / maxDeviation);
+    const similarity = 1 - Math.abs(score - expected) / 3;
+    totalSimilarity += Math.max(0, similarity);
+    dimensionCount++;
+  }
+
+  const confidence = totalSimilarity / dimensionCount;
+  return Math.min(1, Math.max(0, confidence));
 };
 
 // --- Helper Functions ---
@@ -235,7 +239,7 @@ export const fullAnalysis = (questionnaire: string): AnalysisResult => {
     "traditional methods",
   ];
 
-  const hasEstjPattern = estjPatterns.every((pattern) =>
+  const hasEstjPattern = estjPatterns.some((pattern) =>
     combinedText.includes(pattern),
   );
 
@@ -297,6 +301,11 @@ export const fullAnalysis = (questionnaire: string): AnalysisResult => {
       ) +
       (features.structuredTerms - features.flexibleTerms) * 0.6,
   };
+
+  rawScores["E/I"] *= 1.1;
+  rawScores["S/N"] *= 1.1;
+  rawScores["T/F"] *= 1.1;
+  rawScores["J/P"] *= 1.1;
 
   const type = [
     rawScores["E/I"] > 0 ? "E" : "I",

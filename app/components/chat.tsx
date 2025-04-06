@@ -1053,28 +1053,22 @@ function _Chat() {
     if (userInput.startsWith("/")) {
       const command = userInput.slice(1).trim(); // Remove "/"
       let systemPrompt = "";
-
       switch (command) {
         case "mbti":
           systemPrompt = `Act as an MBTI-based chatbot. Your personality type is ${userMBTI}. Respond accordingly.`;
           break;
-
         case "fun":
           systemPrompt = `Tell me a joke based on an ${userMBTI} personality.`;
           break;
-
         case "advice":
           systemPrompt = `Give me life advice based on an ${userMBTI} personality.`;
           break;
-
         case "career":
           systemPrompt = `What career path is best suited for an ${userMBTI} personality type?`;
           break;
-
         case "love":
           systemPrompt = `Give me relationship advice based on an ${userMBTI} personality type.`;
           break;
-
         case "reset":
           localStorage.removeItem("mbti");
           chatStore.onUserInput(
@@ -1082,7 +1076,6 @@ function _Chat() {
           );
           setUserInput("");
           return;
-
         default:
           chatStore.onUserInput(
             `Unknown command: ${command}. Try /mbti, /fun, /advice, /career, /love, or /reset.`,
@@ -1090,18 +1083,15 @@ function _Chat() {
           setUserInput("");
           return;
       }
-
       // Send the system message to chatbot
       chatStore.onUserInput(systemPrompt);
       setUserInput(""); // Clear input field
       return;
     }
-
     // Default Chat Behavior (Inject MBTI)
     chatStore
       .onUserInput(`(${userMBTI}) ${userInput}`, attachImages)
       .then(() => setIsLoading(false));
-
     setAttachImages([]);
     chatStore.setLastInput(`(${userMBTI}) ${userInput}`);
     setUserInput("");
@@ -1582,12 +1572,12 @@ function _Chat() {
     setAttachImages(images);
   }
 
-  // 快捷键 shortcut keys
+  // shortcut keys
   const [showShortcutKeyModal, setShowShortcutKeyModal] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
-      // 打开新聊天 command + shift + o
+      // command + shift + o
       if (
         (event.metaKey || event.ctrlKey) &&
         event.shiftKey &&
@@ -1599,12 +1589,12 @@ function _Chat() {
           navigate(Path.Chat);
         }, 10);
       }
-      // 聚焦聊天输入 shift + esc
+      // shift + esc
       else if (event.shiftKey && event.key.toLowerCase() === "escape") {
         event.preventDefault();
         inputRef.current?.focus();
       }
-      // 复制最后一个代码块 command + shift + ;
+      // command + shift + ;
       else if (
         (event.metaKey || event.ctrlKey) &&
         event.shiftKey &&
@@ -1617,7 +1607,7 @@ function _Chat() {
           copyCodeButton[copyCodeButton.length - 1].click();
         }
       }
-      // 复制最后一个回复 command + shift + c
+      // command + shift + c
       else if (
         (event.metaKey || event.ctrlKey) &&
         event.shiftKey &&
@@ -1632,7 +1622,7 @@ function _Chat() {
           copyToClipboard(lastMessageContent);
         }
       }
-      // 展示快捷键 command + /
+      // command + /
       else if ((event.metaKey || event.ctrlKey) && event.key === "/") {
         event.preventDefault();
         setShowShortcutKeyModal(true);
